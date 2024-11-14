@@ -1,3 +1,20 @@
+#mock
+
+<img width="513" alt="스크린샷 2024-11-14 오후 1 41 29" src="https://github.com/user-attachments/assets/1b8fe628-654d-4d4c-951c-be4bb87b9781"><br>
+
+<img width="250" alt="스크린샷 2024-11-14 오후 1 41 45" src="https://github.com/user-attachments/assets/8b4b7bf7-1379-416c-9116-d205aec1550c"> <br>
+
+ <img width="304" alt="스크린샷 2024-11-14 오후 1 41 57" src="https://github.com/user-attachments/assets/490a6279-fb76-4dcf-b93e-bf6490c5782b"> <br>
+
+<img width="307" alt="스크린샷 2024-11-14 오후 1 42 08" src="https://github.com/user-attachments/assets/22a7df05-b03c-4068-81bd-555e31e2990c"> <br>
+
+<img width="296" alt="스크린샷 2024-11-14 오후 1 42 17" src="https://github.com/user-attachments/assets/899ba3dd-1132-4c05-a656-cbeac0335bb0"> <br>
+
+
+
+
+
+#sketch
 #1
 
 <img width="380" alt="스크린샷 2024-11-12 오후 12 06 44" src="https://github.com/user-attachments/assets/700bb472-8cb5-4498-91e0-627bb7b61c4e"> <br>
