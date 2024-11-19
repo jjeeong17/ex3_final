@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ocean Visualization</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: 'CS Juicy';
+        src: url('fonts/CSJuicy-Regular.ttf') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      body {
+        font-family: 'Cormorant', serif;
+        text-align: center;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ffffff;
+      }
+
+      .full-screen {
+        text-align: center;
+      }
+
+      .title {
+        font-family: 'CS Juicy', serif;
+        font-weight: 500; /* Semi-bold */
+        font-size: 8.5rem;
+        color: #666666;
+        margin-bottom: 0;
+      }
+
+      .subtitle {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.2rem;
+        color: #cecece;
+        margin-bottom: 10px;
+      }
+
+      .scroll-icon img {
+        width: 25px;
+        height: auto;
+        animation: bounce 2.5s infinite;
+      }
+
+      .scroll-icon {
+        position: relative;
+        top: 20px;
+        cursor: pointer;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-15px);
+        }
+        60% {
+          transform: translateY(-8px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="full-screen">
+      <h1 class="title">OCEAN</h1>
+      <p class="subtitle">CLICK ALONG TO REVEAL COLLECTION BENEATH US</p>
+      <div class="scroll-icon">
+        <img src="scroll_icon.png" alt="Scroll Down Icon" />
+      </div>
+    </div>
+    <script src="landing.js"></script>
+  </body>
+</html>

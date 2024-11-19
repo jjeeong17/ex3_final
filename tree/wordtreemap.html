@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Word Treemap</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        overflow-x: auto; /* 수평 스크롤 활성화 */
+        width: 200vw; /* 수평 확장 */
+      }
+
+      .section {
+        width: 44vw; /* 각 섹션이 화면의 절반 차지 */
+        padding: 10px;
+        position: relative;
+      }
+      .title {
+        font-family: 'Cormorant', serif;
+        font-size: 180px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        left: 100px;
+        margin: 0;
+      }
+
+      .ocean-list {
+        font-family: 'Cormorant', serif;
+        list-style-type: none;
+        padding: 0;
+        font-weight: 600;
+        font-size: 70px;
+        line-height: 100px;
+        color: #636363;
+        position: absolute;
+        top: 200px;
+        left: 700px;
+        text-align: left;
+      }
+
+      .ocean-list li {
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .ocean-list li:hover {
+        color: #0077be;
+      }
+
+      .species-list {
+        font-family: 'Cormorant', serif;
+        list-style-type: none;
+        padding: 0;
+        font-weight: 600;
+        font-size: 70px;
+        line-height: 100px;
+        color: #636363;
+        position: absolute;
+        top: 150px;
+        left: 350px;
+        text-align: left;
+      }
+
+      .species-list li:hover {
+        color: #0077be;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .archetype-list {
+        font-family: 'Cormorant', serif;
+        list-style-type: none;
+        padding: 0;
+        font-weight: 600;
+        font-size: 70px;
+        line-height: 100px;
+        color: #636363;
+        position: absolute;
+        top: 150px;
+        left: 200px;
+        text-align: left;
+      }
+
+      .archetype-list li:hover {
+        color: #0077be;
+      }
+      .hidden {
+        display: none;
+      }
+
+      .common-name-list {
+        font-family: 'Cormorant', serif;
+        list-style-type: circle;
+        padding: 0;
+        font-weight: 600;
+        font-size: 40px;
+        line-height: 70px;
+        color: #636363;
+        position: absolute;
+        top: 200px;
+        left: 0px;
+        text-align: left;
+      }
+
+      .common-name-list li:hover {
+        color: #0077be;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h1 class="title">Ocean</h1>
+      <ul class="ocean-list"></ul>
+    </div>
+    <div class="section">
+      <ul id="species-list" class="species-list hidden"></ul>
+    </div>
+    <div class="section">
+      <ul id="archetype-list" class="archetype-list hidden"></ul>
+    </div>
+    <div class="section">
+      <ul id="common-name-list" class="common-name-list hidden"></ul>
+    </div>
+
+    <script src="wordtreemap.js"></script>
+  </body>
+</html>
