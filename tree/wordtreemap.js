@@ -1,10 +1,15 @@
+// 전역 상태 변수
+let selectedOcean = null;
+let selectedSpecies = null;
+let selectedArchetype = null;
+
 // JSON 파일 로드
 fetch('../data/final_use.json')
   .then((response) => response.json())
   .then((data) => {
     console.log('JSON 데이터:', data);
-    oceanData = d3.group(data, (d) => d.ocean);
-    createOceanList(oceanData);
+    oceanData = data; // 전체 데이터 저장
+    createOceanList(data); // Ocean 리스트 생성
   })
   .catch((error) => console.error('JSON 데이터 로드 오류:', error));
 
@@ -21,10 +26,21 @@ function scrollToCenter(targetElement) {
   });
 }
 
-function createOceanList(oceanData) {
+// 리스트 스타일 업데이트 공통 함수
+function updateListStyles(listSelector, selectedText) {
+  const listItems = document.querySelectorAll(listSelector + ' li');
+  listItems.forEach((item) => {
+    item.classList.toggle('selected', item.textContent === selectedText);
+  });
+}
+
+function createOceanList(data) {
   const oceanList = document.querySelector('.ocean-list');
 
-  Array.from(oceanData.keys()).forEach((oceanName) => {
+  // 고유한 Ocean 값 추출
+  const oceans = Array.from(new Set(data.map((d) => d.ocean)));
+
+  oceans.forEach((oceanName) => {
     const li = document.createElement('li');
     li.textContent = oceanName;
     li.onclick = () => navigateToSpecies(oceanName);
@@ -43,10 +59,14 @@ const speciesOrder = [
 const archetypeOrder = ['Predator', 'Prey', 'Others'];
 
 function navigateToSpecies(oceanName) {
-  const filteredSpecies = Array.from(
-    oceanData.get(oceanName),
-    (d) => d.species
-  );
+  selectedOcean = oceanName; // 현재 선택된 Ocean 저장
+  selectedSpecies = null; // 이전 선택된 Species 초기화
+  selectedArchetype = null; // 이전 선택된 Archetype 초기화
+
+  // Ocean에 해당하는 Species 필터링
+  const filteredSpecies = oceanData
+    .filter((d) => d.ocean === oceanName)
+    .map((d) => d.species);
 
   const uniqueSpecies = Array.from(new Set(filteredSpecies));
   const sortedSpecies = uniqueSpecies.sort(
@@ -54,17 +74,10 @@ function navigateToSpecies(oceanName) {
   );
 
   updateSpeciesList(sortedSpecies);
-  updateOceanListStyles(oceanName);
+  updateListStyles('.ocean-list', oceanName); // Ocean 스타일 업데이트
 
   const speciesSection = document.querySelector('.species-list');
   scrollToCenter(speciesSection);
-}
-
-function updateOceanListStyles(selectedOcean) {
-  const oceanListItems = document.querySelectorAll('.ocean-list li');
-  oceanListItems.forEach((item) => {
-    item.style.color = item.textContent === selectedOcean ? '#0077be' : '#ccc';
-  });
 }
 
 function updateSpeciesList(speciesData) {
@@ -82,9 +95,12 @@ function updateSpeciesList(speciesData) {
 }
 
 function navigateToArchetype(speciesName) {
-  const filteredArchetypes = Array.from(oceanData.values())
-    .flat()
-    .filter((d) => d.species === speciesName)
+  selectedSpecies = speciesName; // 현재 선택된 Species 저장
+  selectedArchetype = null; // 이전 선택된 Archetype 초기화
+
+  // Ocean 및 Species 조건에 맞는 Archetype 필터링
+  const filteredArchetypes = oceanData
+    .filter((d) => d.ocean === selectedOcean && d.species === speciesName)
     .map((d) => d.archetype);
 
   const uniqueArchetypes = Array.from(new Set(filteredArchetypes));
@@ -93,6 +109,7 @@ function navigateToArchetype(speciesName) {
   );
 
   updateArchetypeList(sortedArchetypes);
+  updateListStyles('.species-list', speciesName); // Species 스타일 업데이트
 
   const archetypeList = document.querySelector('.archetype-list');
   scrollToCenter(archetypeList);
@@ -105,25 +122,32 @@ function updateArchetypeList(archetypeData) {
   archetypeData.forEach((archetypeName) => {
     const li = document.createElement('li');
     li.textContent = archetypeName;
-    li.onclick = () => navigateToCommonNames(archetypeName); // Common Names로 이동
+    li.onclick = () => navigateToCommonNames(archetypeName);
     archetypeList.appendChild(li);
   });
 
   archetypeList.classList.remove('hidden');
 }
 
-// Common Name로 이동
 function navigateToCommonNames(archetypeName) {
-  const filteredCommonNames = Array.from(oceanData.values())
-    .flat()
-    .filter((d) => d.archetype === archetypeName)
-    .sort((a, b) => parseFloat(a.depth) - parseFloat(b.depth)) // depth 낮은 순으로 정렬
+  selectedArchetype = archetypeName; // 현재 선택된 Archetype 저장
+
+  // Ocean, Species, Archetype 조건에 맞는 Common Name 필터링
+  const filteredCommonNames = oceanData
+    .filter(
+      (d) =>
+        d.ocean === selectedOcean &&
+        d.species === selectedSpecies &&
+        d.archetype === archetypeName
+    )
+    .sort((a, b) => parseFloat(a.depth) - parseFloat(b.depth)) // Depth 낮은 순으로 정렬
     .map((d) => ({
-      commonName: d.common_name,
-      depth: d.depth,
+      common_name: d.common_name,
+      title: d.title,
     }));
 
   updateCommonNameList(filteredCommonNames);
+  updateListStyles('.archetype-list', archetypeName); // Archetype 스타일 업데이트
 
   const commonNameList = document.querySelector('.common-name-list');
   scrollToCenter(commonNameList);
@@ -133,9 +157,18 @@ function updateCommonNameList(commonNameData) {
   const commonNameList = document.querySelector('.common-name-list');
   commonNameList.innerHTML = '';
 
-  commonNameData.forEach((item) => {
+  commonNameData.forEach((commonName) => {
     const li = document.createElement('li');
-    li.textContent = `${item.commonName}`; // Common Name 및 Depth 표시
+    li.textContent = commonName.common_name;
+
+    li.onmouseover = () => {
+      li.textContent = commonName.title;
+    };
+
+    li.onmouseout = () => {
+      li.textContent = commonName.common_name;
+    };
+
     commonNameList.appendChild(li);
   });
 
