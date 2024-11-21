@@ -33,7 +33,16 @@ function updateListStyles(listSelector, selectedText, dataAttribute) {
     const valueToCompare = dataAttribute
       ? item.dataset[dataAttribute]
       : item.textContent;
-    item.classList.toggle('selected', valueToCompare === selectedText);
+    const isSelected = valueToCompare === selectedText;
+    item.classList.toggle('selected', isSelected);
+
+    if (listSelector === '.common-name-list') {
+      if (isSelected) {
+        item.textContent = item.dataset.title; // 선택된 아이템의 텍스트를 title로 설정
+      } else {
+        item.textContent = item.dataset.commonName; // 선택 해제된 아이템의 텍스트를 common_name으로 설정
+      }
+    }
   });
 }
 
@@ -47,6 +56,12 @@ function createOceanList(data) {
     li.textContent = oceanName;
     li.dataset.ocean = oceanName; // 데이터 속성 추가
     li.onclick = () => navigateToSpecies(oceanName);
+    li.onmouseover = () => {
+      li.classList.add('hovered');
+    };
+    li.onmouseout = () => {
+      li.classList.remove('hovered');
+    };
     oceanList.appendChild(li);
   });
 }
@@ -104,6 +119,12 @@ function updateSpeciesList(speciesData) {
     li.textContent = speciesName;
     li.dataset.species = speciesName; // 데이터 속성 추가
     li.onclick = () => navigateToArchetype(speciesName);
+    li.onmouseover = () => {
+      li.classList.add('hovered');
+    };
+    li.onmouseout = () => {
+      li.classList.remove('hovered');
+    };
     speciesList.appendChild(li);
   });
 
@@ -137,6 +158,12 @@ function updateArchetypeList(archetypeData) {
     li.textContent = archetypeName;
     li.dataset.archetype = archetypeName; // 데이터 속성 추가
     li.onclick = () => navigateToCommonNames(archetypeName);
+    li.onmouseover = () => {
+      li.classList.add('hovered');
+    };
+    li.onmouseout = () => {
+      li.classList.remove('hovered');
+    };
     archetypeList.appendChild(li);
   });
 
