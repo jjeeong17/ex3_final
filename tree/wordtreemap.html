@@ -34,9 +34,25 @@
         position: relative;
       }
 
-      .selected {
+      .ocean-list li.selected,
+      .species-list li.selected,
+      .archetype-list li.selected {
         color: #0077be;
         font-weight: bold;
+      }
+
+      @font-face {
+        font-family: 'Futura Md BT Medium';
+        src: url('fonts/FuturaMdBTMedium.woff2') format('woff2'),
+          url('fonts/FuturaMdBTMedium.woff') format('woff'),
+          url('fonts/FuturaMdBTMedium.ttf') format('truetype');
+      }
+
+      /* .common-name-list li.hovered */
+      .common-name-list li.selected {
+        color: #0077be;
+        font-family: 'Futura Md BT Medium', sans-serif;
+        font-size: 40px;
       }
 
       .title {

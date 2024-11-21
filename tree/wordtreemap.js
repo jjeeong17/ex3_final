@@ -14,7 +14,6 @@ fetch('../data/final_use_updated.json')
   .catch((error) => console.error('JSON 데이터 로드 오류:', error));
 
 // 공통 스크롤 함수
-// 공통 스크롤 함수
 function scrollToCenter(targetElement) {
   const rect = targetElement.getBoundingClientRect();
   const targetPositionX = rect.left + window.scrollX - window.innerWidth / 2.4; // X축 중앙 이동
@@ -28,10 +27,13 @@ function scrollToCenter(targetElement) {
 }
 
 // 리스트 스타일 업데이트 공통 함수
-function updateListStyles(listSelector, selectedText) {
+function updateListStyles(listSelector, selectedText, dataAttribute) {
   const listItems = document.querySelectorAll(listSelector + ' li');
   listItems.forEach((item) => {
-    item.classList.toggle('selected', item.textContent === selectedText);
+    const valueToCompare = dataAttribute
+      ? item.dataset[dataAttribute]
+      : item.textContent;
+    item.classList.toggle('selected', valueToCompare === selectedText);
   });
 }
 
@@ -43,6 +45,7 @@ function createOceanList(data) {
   oceans.forEach((oceanName) => {
     const li = document.createElement('li');
     li.textContent = oceanName;
+    li.dataset.ocean = oceanName; // 데이터 속성 추가
     li.onclick = () => navigateToSpecies(oceanName);
     oceanList.appendChild(li);
   });
@@ -86,7 +89,7 @@ function navigateToSpecies(oceanName) {
 
   const uniqueSpecies = Array.from(new Set(filteredSpecies));
   updateSpeciesList(sortByPriority(uniqueSpecies, speciesPriority)); // 우선순위 정렬
-  updateListStyles('.ocean-list', oceanName);
+  updateListStyles('.ocean-list', oceanName, 'ocean');
 
   scrollToCenter(document.querySelector('.species-list'));
 }
@@ -99,6 +102,7 @@ function updateSpeciesList(speciesData) {
   speciesData.forEach((speciesName) => {
     const li = document.createElement('li');
     li.textContent = speciesName;
+    li.dataset.species = speciesName; // 데이터 속성 추가
     li.onclick = () => navigateToArchetype(speciesName);
     speciesList.appendChild(li);
   });
@@ -118,7 +122,7 @@ function navigateToArchetype(speciesName) {
   updateArchetypeList(
     sortByPriority(Array.from(new Set(filteredArchetypes)), archetypePriority) // 우선순위 정렬
   );
-  updateListStyles('.species-list', speciesName);
+  updateListStyles('.species-list', speciesName, 'species');
 
   scrollToCenter(document.querySelector('.archetype-list'));
 }
@@ -131,6 +135,7 @@ function updateArchetypeList(archetypeData) {
   archetypeData.forEach((archetypeName) => {
     const li = document.createElement('li');
     li.textContent = archetypeName;
+    li.dataset.archetype = archetypeName; // 데이터 속성 추가
     li.onclick = () => navigateToCommonNames(archetypeName);
     archetypeList.appendChild(li);
   });
@@ -152,7 +157,7 @@ function navigateToCommonNames(archetypeName) {
     .sort((a, b) => parseFloat(a.depth) - parseFloat(b.depth));
 
   updateCommonNameList(filteredCommonNames);
-  updateListStyles('.archetype-list', archetypeName);
+  updateListStyles('.archetype-list', archetypeName, 'archetype');
 
   scrollToCenter(document.querySelector('.common-name-list'));
 }
@@ -165,16 +170,53 @@ function updateCommonNameList(commonNameData) {
   commonNameData.forEach((commonName) => {
     const li = document.createElement('li');
     li.textContent = commonName.common_name;
+    li.dataset.commonName = commonName.common_name; // 원래 common_name 저장
+    li.dataset.title = commonName.title; // title 저장
     li.style.cursor = 'pointer';
 
-    li.onclick = () => showPopup(commonName);
-    li.onmouseover = () => (li.textContent = commonName.title);
-    li.onmouseout = () => (li.textContent = commonName.common_name);
+    li.onclick = () => {
+      showPopup(commonName);
+      updateListStyles(
+        '.common-name-list',
+        commonName.common_name,
+        'commonName'
+      ); // 스타일 업데이트
+      li.textContent = commonName.title; // 클릭 시 텍스트를 title로 변경
+    };
+    li.onmouseover = () => {
+      li.textContent = commonName.title;
+      li.classList.add('hovered'); // Hover 스타일 적용
+    };
+    li.onmouseout = () => {
+      if (!li.classList.contains('selected')) {
+        li.textContent = commonName.common_name;
+        li.classList.remove('hovered'); // Hover 스타일 제거
+      }
+    };
 
     commonNameList.appendChild(li);
   });
 
   commonNameList.classList.remove('hidden');
+}
+
+function updateListStyles(listSelector, selectedText, dataAttribute) {
+  const listItems = document.querySelectorAll(listSelector + ' li');
+  listItems.forEach((item) => {
+    const valueToCompare = dataAttribute
+      ? item.dataset[dataAttribute]
+      : item.textContent;
+    const isSelected = valueToCompare === selectedText;
+    item.classList.toggle('selected', isSelected);
+
+    if (listSelector === '.common-name-list') {
+      if (isSelected) {
+        item.textContent = item.dataset.title; // 선택된 아이템의 텍스트를 title로 설정
+      } else {
+        item.textContent = item.dataset.commonName; // 선택 해제된 아이템의 텍스트를 common_name으로 설정
+      }
+    }
+  });
 }
 
 // 팝업 표시
