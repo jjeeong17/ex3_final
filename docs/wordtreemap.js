@@ -5,7 +5,7 @@ let selectedArchetype = null;
 let popupMap = null; // Leaflet 지도 인스턴스
 
 // JSON 파일 로드
-fetch('../data/final_use_updated.json')
+fetch('final_use_updated.json')
   .then((response) => response.json())
   .then((data) => {
     oceanData = data; // 전체 데이터 저장
