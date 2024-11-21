@@ -263,7 +263,7 @@ function showPopup(data) {
   mapContainer.style.width = '380px'; /* 너비 설정 */
   mapContainer.style.height = '150px'; /* 높이 설정 */
   mapContainer.style.marginTop = '20px'; /* 상단 여백 */
-  mapContainer.style.marginLeft = '-10px'; /* 왼쪽으로 50px 이동 */
+  mapContainer.style.marginLeft = '-10px'; /* 왼쪽으로 이동 */
   mapContainer.style.borderRadius = '5px'; /* 모서리를 둥글게 */
 
   const popupMapContainer = document.getElementById('popup-map');
@@ -283,15 +283,22 @@ function showPopup(data) {
     'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
     {
       attribution: '<a href="http://stamen.com">Stamen Design</a>',
-      maxZoom: 18,
+      maxZoom: 1,
     }
   ).addTo(map);
 
+  // 팝업 표시
   popup.style.display = 'block';
+
+  // 화면 확장
+  document.body.style.width = '220vw'; // 팝업 표시 시 화면 너비 확장
 }
 
 // 팝업 닫기
 document.getElementById('close-popup').onclick = () => {
   const popup = document.getElementById('popup');
   popup.style.display = 'none';
+
+  // 화면 크기 복원
+  document.body.style.width = '200vw'; // 팝업 닫힐 때 원래 크기로 복원
 };

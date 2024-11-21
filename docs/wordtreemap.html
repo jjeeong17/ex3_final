@@ -120,7 +120,7 @@
 
       .popup {
         position: fixed;
-        top: 60%;
+        top: 55%;
         left: 85%;
         transform: translate(-50%, -50%);
         width: 400px;
@@ -129,15 +129,17 @@
         box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         z-index: 1000;
         display: none;
+        padding-bottom: 10px;
       }
 
       .popup-content {
-        padding: 20px;
+        padding: 18px;
         text-align: center;
       }
 
       .popup img {
-        margin-top: 12px;
+        margin-top: 18px;
+        margin-bottom: -20px; /* 이미지 아래 여백 줄임 */
         width: 350px; /* 고정 너비 */
         height: 250px; /* 고정 높이 */
         object-fit: contain; /* 비율 유지, 잘림 방지 */
@@ -156,7 +158,7 @@
         font-size: 30px; /* 폰트 크기 */
         font-weight: 650;
         color: #127c91; /* 요청한 색상 */
-        margin-bottom: -7px; /* 제목과의 간격 */
+        margin-bottom: -6px; /* 제목과의 간격 */
         white-space: nowrap; /* 줄바꿈 방지 */
       }
       /* Title Name 스타일 */
@@ -165,7 +167,7 @@
         font-size: 15px;
         font-style: italic; /* 이탤릭체 */
         color: #636363; /* 연한 회색 */
-        margin-bottom: 12px; /* 다른 요소와의 간격 */
+        margin-bottom: 10px; /* 다른 요소와의 간격 */
       }
 
       /* Label 스타일 (Ocean, Species 등) */
@@ -195,7 +197,7 @@
       #popup-map {
         height: 200px;
         width: 100%; /* 팝업 너비에 맞춤 */
-        margin-top: 10px;
+        margin-top: -13px;
         border-radius: 5px;
 
         /* 중앙 정렬 */
@@ -208,8 +210,8 @@
         position: absolute;
         top: 6px; /* 팝업 상단 위치 */
         right: 15px; /* 팝업 오른쪽 위치 */
-        width: 23px;
-        height: 23px;
+        width: 27px;
+        height: 27px;
         background-image: url('icon-close-2.png'); /* 기본 아이콘 이미지 */
         background-size: cover;
         background-repeat: no-repeat;

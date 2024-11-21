@@ -2770,7 +2770,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991217-1",
-    "title": "Labrisomus ?",
+    "title": "Labrisomus",
     "latitude": "12.0838",
     "longitude": "-68.8963",
     "depth": "2",
@@ -2809,7 +2809,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991344-0",
-    "title": "Scorpaena brasiliensis ?",
+    "title": "Scorpaena brasiliensis",
     "latitude": "12.0663",
     "longitude": "-68.8597",
     "depth": "11",
@@ -5396,7 +5396,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990632-1",
-    "title": "Sparisoma cretense ?",
+    "title": "Sparisoma cretense",
     "latitude": "16.5767",
     "longitude": "-22.8567",
     "depth": "38",
@@ -7580,7 +7580,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990630-1",
-    "title": "Serranus atricauda ?",
+    "title": "Serranus atricauda",
     "latitude": "16.0325",
     "longitude": "-23.045",
     "depth": "89",
@@ -7632,7 +7632,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991385-0",
-    "title": "Apogon pillionatus ?",
+    "title": "Apogon pillionatus",
     "latitude": "12.0832",
     "longitude": "-68.8991",
     "depth": "116",
@@ -7970,7 +7970,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990667-0",
-    "title": "Parapercis atlantica ?",
+    "title": "Parapercis atlantica",
     "latitude": "16.0325",
     "longitude": "-23.045",
     "depth": "89",
@@ -10791,7 +10791,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990765-0",
-    "title": "Synagrops japonicus ?",
+    "title": "Synagrops japonicus",
     "latitude": "15.7333",
     "longitude": "-23.2742",
     "depth": "69",
@@ -11077,7 +11077,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990632-0",
-    "title": "Trigloporus lastoviza ?",
+    "title": "Trigloporus lastoviza",
     "latitude": "15.7533",
     "longitude": "-23.0908",
     "depth": "67",
@@ -11116,7 +11116,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991393-0",
-    "title": "Mugil curema ?",
+    "title": "Mugil curema",
     "latitude": "12.2725",
     "longitude": "-69.0537",
     "depth": "1",
@@ -11129,7 +11129,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991220-0",
-    "title": "Entomacrodus ?",
+    "title": "Entomacrodus",
     "latitude": "12.3068",
     "longitude": "-69.1455",
     "depth": "2",
@@ -11402,7 +11402,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412990684-1",
-    "title": "Malacosteus niger ?",
+    "title": "Malacosteus niger",
     "latitude": "15.1933",
     "longitude": "-23.45",
     "depth": "878",
@@ -11948,7 +11948,7 @@
   },
   {
     "id": "ld1-1643412988961-1643413000486-1",
-    "title": "Sueviota ?",
+    "title": "Sueviota",
     "latitude": "-17.4799",
     "longitude": "-149.856",
     "depth": "54",
@@ -17785,7 +17785,7 @@
   },
   {
     "id": "ld1-1643414195102-1643414236475-0",
-    "title": "Ostracion solorensis ?",
+    "title": "Ostracion solorensis",
     "latitude": "12.9461",
     "longitude": "121.726",
     "depth": "27",
@@ -21828,7 +21828,7 @@
   },
   {
     "id": "ld1-1643414195102-1643414246845-0",
-    "title": "Canthigaster papua ?",
+    "title": "Canthigaster papua",
     "latitude": "-10.27",
     "longitude": "166.292",
     "depth": "8",
@@ -23531,7 +23531,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991345-1",
-    "title": "Gobiesox barbatulus ?",
+    "title": "Gobiesox barbatulus",
     "latitude": "12.2529",
     "longitude": "-69.0364",
     "depth": "2",
@@ -23739,7 +23739,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991311-0",
-    "title": "Halichoeres bathyphilus ?",
+    "title": "Halichoeres bathyphilus",
     "latitude": "12.0832",
     "longitude": "-68.8991",
     "depth": "140",
@@ -24116,7 +24116,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991303-0",
-    "title": "Canthigaster rostrata ?",
+    "title": "Canthigaster rostrata",
     "latitude": "12.0832",
     "longitude": "-68.8991",
     "depth": "116",
@@ -24480,7 +24480,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991180-0",
-    "title": "Malacoctenus aurolineatus ?",
+    "title": "Malacoctenus aurolineatus",
     "latitude": "12.1757",
     "longitude": "-68.8639",
     "depth": "2",
@@ -24571,7 +24571,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991243-0",
-    "title": "Bathygobius geminatus ? Tornabene et al.",
+    "title": "Bathygobius geminatus",
     "latitude": "12.0773",
     "longitude": "-68.8798",
     "depth": "3",
@@ -24766,7 +24766,7 @@
   },
   {
     "id": "ld1-1643413067249-1643413084162-0",
-    "title": "Eviota randalli ? Greenfield",
+    "title": "Eviota randalli",
     "latitude": "-14.2994",
     "longitude": "-178.161",
     "depth": "12",
@@ -25754,7 +25754,7 @@
   },
   {
     "id": "ld1-1643413067249-1643413071231-0",
-    "title": "Saurida gracilis ?",
+    "title": "Saurida gracilis",
     "latitude": "21.4326",
     "longitude": "-157.789",
     "depth": "1",
@@ -26001,7 +26001,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991343-1",
-    "title": "Eucinostomus lefroyi ?",
+    "title": "Eucinostomus lefroyi",
     "latitude": "12.2725",
     "longitude": "-69.0537",
     "depth": "1",
@@ -26703,7 +26703,7 @@
   },
   {
     "id": "ld1-1643413067249-1643413084193-0",
-    "title": "Eviota jewettae ? Greenfield & Winterbottom",
+    "title": "Eviota jewettae",
     "latitude": "-14.2966",
     "longitude": "-178.166",
     "depth": "16",
@@ -27184,7 +27184,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991238-1",
-    "title": "Labrisomus albigenys ? Beebe & Tee-Van",
+    "title": "Labrisomus albigenys",
     "latitude": "12.0663",
     "longitude": "-68.8597",
     "depth": "11",
@@ -27275,7 +27275,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991302-0",
-    "title": "Symphysanodon ?",
+    "title": "Symphysanodon",
     "latitude": "12.0832",
     "longitude": "-68.8991",
     "depth": "216",
