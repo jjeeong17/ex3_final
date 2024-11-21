@@ -3094,19 +3094,6 @@
     "species": "Eel-like Fish"
   },
   {
-    "id": "ld1-1643412988961-1643412991343-0",
-    "title": "Synodus synodus",
-    "latitude": "12.0838",
-    "longitude": "-68.8963",
-    "depth": "2",
-    "ocean": "Atlantic",
-    "record_link": "http://n2t.net/ark:/65665/3a06b0998-8e0f-4b0b-a744-14d11ddcd9e7",
-    "common_name": "Synodus blenny",
-    "thumbnail": "https://collections.nmnh.si.edu/media/?i=10164041",
-    "archetype": "Predator",
-    "species": "Reef Fish"
-  },
-  {
     "id": "ld1-1643412988961-1643412989992-0",
     "title": "Apogon aurolineatus",
     "latitude": "16.8021",
@@ -23739,7 +23726,7 @@
   },
   {
     "id": "ld1-1643412988961-1643412991311-0",
-    "title": "Halichoeres bathyphilus ?",
+    "title": "Halichoeres bathyphilus",
     "latitude": "12.0832",
     "longitude": "-68.8991",
     "depth": "140",

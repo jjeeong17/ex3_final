@@ -233,10 +233,11 @@ function showPopup(data) {
   // 지도 초기화
   const mapContainer = document.createElement('div');
   mapContainer.id = `map-sample-${data.common_name}`; // 고유 ID 생성
-  mapContainer.style.width = '380px';
-  mapContainer.style.height = '150px';
-  mapContainer.style.marginTop = '20px';
-  mapContainer.style.borderRadius = '5px';
+  mapContainer.style.width = '380px'; /* 너비 설정 */
+  mapContainer.style.height = '150px'; /* 높이 설정 */
+  mapContainer.style.marginTop = '20px'; /* 상단 여백 */
+  mapContainer.style.marginLeft = '-10px'; /* 왼쪽으로 50px 이동 */
+  mapContainer.style.borderRadius = '5px'; /* 모서리를 둥글게 */
 
   const popupMapContainer = document.getElementById('popup-map');
   popupMapContainer.innerHTML = ''; // 기존 지도 초기화
