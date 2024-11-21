@@ -2,7 +2,7 @@
   "name": "Root",
   "children": [
     {
-      "name": "Pacific",
+      "name": "Pacific Ocean",
       "children": [
         {
           "name": "Eel-like Fish",
@@ -18750,7 +18750,7 @@
       ]
     },
     {
-      "name": "Atlantic",
+      "name": "Atlantic Ocean",
       "children": [
         {
           "name": "Reef Fish",
@@ -25483,7 +25483,7 @@
       ]
     },
     {
-      "name": "Indian",
+      "name": "Indian Ocean",
       "children": [
         {
           "name": "Reef Fish",
@@ -25971,7 +25971,7 @@
       ]
     },
     {
-      "name": "Arctic",
+      "name": "Arctic Ocean",
       "children": [
         {
           "name": "Pelagic Fish",

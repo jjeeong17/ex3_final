@@ -5,7 +5,7 @@ let selectedArchetype = null;
 let popupMap = null; // Leaflet 지도 인스턴스
 
 // JSON 파일 로드
-fetch('../data/final_use.json')
+fetch('../data/final_use_updated.json')
   .then((response) => response.json())
   .then((data) => {
     oceanData = data; // 전체 데이터 저장
@@ -14,14 +14,15 @@ fetch('../data/final_use.json')
   .catch((error) => console.error('JSON 데이터 로드 오류:', error));
 
 // 공통 스크롤 함수
+// 공통 스크롤 함수
 function scrollToCenter(targetElement) {
-  const targetPosition =
-    targetElement.getBoundingClientRect().left +
-    window.scrollX -
-    window.innerWidth / 3;
+  const rect = targetElement.getBoundingClientRect();
+  const targetPositionX = rect.left + window.scrollX - window.innerWidth / 2.4; // X축 중앙 이동
+  const targetPositionY = rect.top + window.scrollY - window.innerHeight / 5; // Y축 약간 아래 이동 (비율 조정 가능)
 
   window.scrollTo({
-    left: targetPosition,
+    left: targetPositionX,
+    top: targetPositionY, // Y축 스크롤 추가
     behavior: 'smooth',
   });
 }
@@ -47,6 +48,32 @@ function createOceanList(data) {
   });
 }
 
+// 우선순위 배열
+const speciesPriority = [
+  'Reef Fish',
+  'Pelagic Fish',
+  'Eel-like Fish',
+  'Demersal Fish',
+  'Others',
+];
+
+const archetypePriority = ['Predator', 'Prey', 'Others'];
+
+// 우선순위에 따라 정렬 함수
+function sortByPriority(array, priorityArray) {
+  return array.sort((a, b) => {
+    const priorityA = priorityArray.indexOf(a);
+    const priorityB = priorityArray.indexOf(b);
+
+    // 우선순위가 없는 경우 알파벳 순으로 정렬
+    if (priorityA === -1 && priorityB === -1) return a.localeCompare(b);
+    if (priorityA === -1) return 1;
+    if (priorityB === -1) return -1;
+
+    return priorityA - priorityB;
+  });
+}
+
 // Species 리스트로 이동
 function navigateToSpecies(oceanName) {
   selectedOcean = oceanName;
@@ -58,7 +85,7 @@ function navigateToSpecies(oceanName) {
     .map((d) => d.species);
 
   const uniqueSpecies = Array.from(new Set(filteredSpecies));
-  updateSpeciesList(uniqueSpecies.sort());
+  updateSpeciesList(sortByPriority(uniqueSpecies, speciesPriority)); // 우선순위 정렬
   updateListStyles('.ocean-list', oceanName);
 
   scrollToCenter(document.querySelector('.species-list'));
@@ -88,7 +115,9 @@ function navigateToArchetype(speciesName) {
     .filter((d) => d.ocean === selectedOcean && d.species === speciesName)
     .map((d) => d.archetype);
 
-  updateArchetypeList(Array.from(new Set(filteredArchetypes)).sort());
+  updateArchetypeList(
+    sortByPriority(Array.from(new Set(filteredArchetypes)), archetypePriority) // 우선순위 정렬
+  );
   updateListStyles('.species-list', speciesName);
 
   scrollToCenter(document.querySelector('.archetype-list'));
@@ -162,9 +191,9 @@ function showPopup(data) {
   // 지도 초기화
   const mapContainer = document.createElement('div');
   mapContainer.id = `map-sample-${data.common_name}`; // 고유 ID 생성
-  mapContainer.style.width = '250px';
+  mapContainer.style.width = '380px';
   mapContainer.style.height = '150px';
-  mapContainer.style.marginTop = '10px';
+  mapContainer.style.marginTop = '20px';
   mapContainer.style.borderRadius = '5px';
 
   const popupMapContainer = document.getElementById('popup-map');
