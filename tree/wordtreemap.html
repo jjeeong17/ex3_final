@@ -48,7 +48,7 @@
           url('fonts/FuturaMdBTMedium.ttf') format('truetype');
       }
 
-      /* .common-name-list li.hovered */
+      .common-name-list li.hovered,
       .common-name-list li.selected {
         color: #127c91;
         font-family: 'Futura Md BT Medium', sans-serif;
@@ -57,12 +57,13 @@
 
       .title {
         font-family: 'Cormorant', serif;
-        font-size: 140px;
+        font-size: 100px;
         font-weight: bold;
         position: absolute;
-        top: 60px;
-        left: 100px;
+        top: 50px;
+        left: 50px;
         margin: 0;
+        white-space: nowrap; /* 줄바꿈 방지 */
       }
 
       .ocean-list,
@@ -218,7 +219,7 @@
   </head>
   <body>
     <div class="section">
-      <h1 class="title">Ocean</h1>
+      <h1 class="title">Discover Fish</h1>
       <ul class="ocean-list"></ul>
     </div>
     <div class="section">
