@@ -1,32 +1,32 @@
-// 전역 상태 변수
+// Global state variables
 let selectedOcean = null;
 let selectedSpecies = null;
 let selectedArchetype = null;
-let popupMap = null; // Leaflet 지도 인스턴스
+let popupMap = null; // Leaflet map instance
 
-// JSON 파일 로드
+// Load JSON file
 fetch('final_use_updated.json')
   .then((response) => response.json())
   .then((data) => {
-    oceanData = data; // 전체 데이터 저장
-    createOceanList(data); // Ocean 리스트 생성
+    oceanData = data; // Save all data
+    createOceanList(data); // Create Ocean list
   })
-  .catch((error) => console.error('JSON 데이터 로드 오류:', error));
+  .catch((error) => console.error('Error loading JSON data:', error));
 
-// 공통 스크롤 함수
+// Common scroll function
 function scrollToCenter(targetElement) {
   const rect = targetElement.getBoundingClientRect();
-  const targetPositionX = rect.left + window.scrollX - window.innerWidth / 2.4; // X축 중앙 이동
-  const targetPositionY = rect.top + window.scrollY - window.innerHeight / 5; // Y축 약간 아래 이동 (비율 조정 가능)
+  const targetPositionX = rect.left + window.scrollX - window.innerWidth / 2.4; // Move to the center on the X-axis
+  const targetPositionY = rect.top + window.scrollY - window.innerHeight / 5; // Slightly move down on the Y-axis (adjustable ratio)
 
   window.scrollTo({
     left: targetPositionX,
-    top: targetPositionY, // Y축 스크롤 추가
+    top: targetPositionY, // Add Y-axis scroll
     behavior: 'smooth',
   });
 }
 
-// 리스트 스타일 업데이트 공통 함수
+// Common function to update list styles
 function updateListStyles(listSelector, selectedText, dataAttribute) {
   const listItems = document.querySelectorAll(listSelector + ' li');
   listItems.forEach((item) => {
@@ -38,15 +38,15 @@ function updateListStyles(listSelector, selectedText, dataAttribute) {
 
     if (listSelector === '.common-name-list') {
       if (isSelected) {
-        item.textContent = item.dataset.title; // 선택된 아이템의 텍스트를 title로 설정
+        item.textContent = item.dataset.title; // Set the text of the selected item to title
       } else {
-        item.textContent = item.dataset.commonName; // 선택 해제된 아이템의 텍스트를 common_name으로 설정
+        item.textContent = item.dataset.commonName; // Set the text of the deselected item to common_name
       }
     }
   });
 }
 
-// Ocean 리스트 생성
+// Create Ocean list
 function createOceanList(data) {
   const oceanList = document.querySelector('.ocean-list');
   const oceans = Array.from(new Set(data.map((d) => d.ocean)));
@@ -54,7 +54,7 @@ function createOceanList(data) {
   oceans.forEach((oceanName) => {
     const li = document.createElement('li');
     li.textContent = oceanName;
-    li.dataset.ocean = oceanName; // 데이터 속성 추가
+    li.dataset.ocean = oceanName; // Add data attribute
     li.onclick = () => navigateToSpecies(oceanName);
     li.onmouseover = () => {
       li.classList.add('hovered');
@@ -66,7 +66,7 @@ function createOceanList(data) {
   });
 }
 
-// 우선순위 배열
+// Priority arrays
 const speciesPriority = [
   'Reef Fish',
   'Pelagic Fish',
@@ -77,13 +77,13 @@ const speciesPriority = [
 
 const archetypePriority = ['Predator', 'Prey', 'Others'];
 
-// 우선순위에 따라 정렬 함수
+// Function to sort by priority
 function sortByPriority(array, priorityArray) {
   return array.sort((a, b) => {
     const priorityA = priorityArray.indexOf(a);
     const priorityB = priorityArray.indexOf(b);
 
-    // 우선순위가 없는 경우 알파벳 순으로 정렬
+    // If no priority, sort alphabetically
     if (priorityA === -1 && priorityB === -1) return a.localeCompare(b);
     if (priorityA === -1) return 1;
     if (priorityB === -1) return -1;
@@ -92,7 +92,7 @@ function sortByPriority(array, priorityArray) {
   });
 }
 
-// Species 리스트로 이동
+// Navigate to the Species list
 function navigateToSpecies(oceanName) {
   selectedOcean = oceanName;
   selectedSpecies = null;
@@ -103,13 +103,13 @@ function navigateToSpecies(oceanName) {
     .map((d) => d.species);
 
   const uniqueSpecies = Array.from(new Set(filteredSpecies));
-  updateSpeciesList(sortByPriority(uniqueSpecies, speciesPriority)); // 우선순위 정렬
+  updateSpeciesList(sortByPriority(uniqueSpecies, speciesPriority)); // Sort by priority
   updateListStyles('.ocean-list', oceanName, 'ocean');
 
   scrollToCenter(document.querySelector('.species-list'));
 }
 
-// Species 리스트 업데이트
+// Update Species list
 function updateSpeciesList(speciesData) {
   const speciesList = document.querySelector('.species-list');
   speciesList.innerHTML = '';
@@ -117,7 +117,7 @@ function updateSpeciesList(speciesData) {
   speciesData.forEach((speciesName) => {
     const li = document.createElement('li');
     li.textContent = speciesName;
-    li.dataset.species = speciesName; // 데이터 속성 추가
+    li.dataset.species = speciesName; // Add data attribute
     li.onclick = () => navigateToArchetype(speciesName);
     li.onmouseover = () => {
       li.classList.add('hovered');
@@ -131,7 +131,7 @@ function updateSpeciesList(speciesData) {
   speciesList.classList.remove('hidden');
 }
 
-// Archetype 리스트로 이동
+// Navigate to the Archetype list
 function navigateToArchetype(speciesName) {
   selectedSpecies = speciesName;
   selectedArchetype = null;
@@ -141,14 +141,14 @@ function navigateToArchetype(speciesName) {
     .map((d) => d.archetype);
 
   updateArchetypeList(
-    sortByPriority(Array.from(new Set(filteredArchetypes)), archetypePriority) // 우선순위 정렬
+    sortByPriority(Array.from(new Set(filteredArchetypes)), archetypePriority) // Sort by priority
   );
   updateListStyles('.species-list', speciesName, 'species');
 
   scrollToCenter(document.querySelector('.archetype-list'));
 }
 
-// Archetype 리스트 업데이트
+// Update Archetype list
 function updateArchetypeList(archetypeData) {
   const archetypeList = document.querySelector('.archetype-list');
   archetypeList.innerHTML = '';
@@ -156,7 +156,7 @@ function updateArchetypeList(archetypeData) {
   archetypeData.forEach((archetypeName) => {
     const li = document.createElement('li');
     li.textContent = archetypeName;
-    li.dataset.archetype = archetypeName; // 데이터 속성 추가
+    li.dataset.archetype = archetypeName; // Add data attribute
     li.onclick = () => navigateToCommonNames(archetypeName);
     li.onmouseover = () => {
       li.classList.add('hovered');
@@ -170,7 +170,7 @@ function updateArchetypeList(archetypeData) {
   archetypeList.classList.remove('hidden');
 }
 
-// Common Name 리스트로 이동
+// Navigate to the Common Name list
 function navigateToCommonNames(archetypeName) {
   selectedArchetype = archetypeName;
 
@@ -189,7 +189,7 @@ function navigateToCommonNames(archetypeName) {
   scrollToCenter(document.querySelector('.common-name-list'));
 }
 
-// Common Name 리스트 업데이트
+// Update Common Name list
 function updateCommonNameList(commonNameData) {
   const commonNameList = document.querySelector('.common-name-list');
   commonNameList.innerHTML = '';
@@ -197,8 +197,8 @@ function updateCommonNameList(commonNameData) {
   commonNameData.forEach((commonName) => {
     const li = document.createElement('li');
     li.textContent = commonName.common_name;
-    li.dataset.commonName = commonName.common_name; // 원래 common_name 저장
-    li.dataset.title = commonName.title; // title 저장
+    li.dataset.commonName = commonName.common_name; // Save original common_name
+    li.dataset.title = commonName.title; // Save title
     li.style.cursor = 'pointer';
 
     li.onclick = () => {
@@ -207,17 +207,17 @@ function updateCommonNameList(commonNameData) {
         '.common-name-list',
         commonName.common_name,
         'commonName'
-      ); // 스타일 업데이트
-      li.textContent = commonName.title; // 클릭 시 텍스트를 title로 변경
+      ); // Update styles
+      li.textContent = commonName.title; // Change text to title on click
     };
     li.onmouseover = () => {
       li.textContent = commonName.title;
-      li.classList.add('hovered'); // Hover 스타일 적용
+      li.classList.add('hovered'); // Apply hover style
     };
     li.onmouseout = () => {
       if (!li.classList.contains('selected')) {
         li.textContent = commonName.common_name;
-        li.classList.remove('hovered'); // Hover 스타일 제거
+        li.classList.remove('hovered'); // Remove hover style
       }
     };
 
@@ -227,26 +227,7 @@ function updateCommonNameList(commonNameData) {
   commonNameList.classList.remove('hidden');
 }
 
-function updateListStyles(listSelector, selectedText, dataAttribute) {
-  const listItems = document.querySelectorAll(listSelector + ' li');
-  listItems.forEach((item) => {
-    const valueToCompare = dataAttribute
-      ? item.dataset[dataAttribute]
-      : item.textContent;
-    const isSelected = valueToCompare === selectedText;
-    item.classList.toggle('selected', isSelected);
-
-    if (listSelector === '.common-name-list') {
-      if (isSelected) {
-        item.textContent = item.dataset.title; // 선택된 아이템의 텍스트를 title로 설정
-      } else {
-        item.textContent = item.dataset.commonName; // 선택 해제된 아이템의 텍스트를 common_name으로 설정
-      }
-    }
-  });
-}
-
-// 팝업 표시
+// Show popup
 function showPopup(data) {
   const popup = document.getElementById('popup');
   document.getElementById('popup-image').src = data.thumbnail || 'default.jpg';
@@ -257,17 +238,17 @@ function showPopup(data) {
   document.getElementById('popup-archetype').textContent = data.archetype;
   document.getElementById('popup-depth').textContent = data.depth;
 
-  // 지도 초기화
+  // Initialize map
   const mapContainer = document.createElement('div');
-  mapContainer.id = `map-sample-${data.common_name}`; // 고유 ID 생성
-  mapContainer.style.width = '380px'; /* 너비 설정 */
-  mapContainer.style.height = '150px'; /* 높이 설정 */
-  mapContainer.style.marginTop = '20px'; /* 상단 여백 */
-  mapContainer.style.marginLeft = '-10px'; /* 왼쪽으로 이동 */
-  mapContainer.style.borderRadius = '5px'; /* 모서리를 둥글게 */
+  mapContainer.id = `map-sample-${data.common_name}`; // Create unique ID
+  mapContainer.style.width = '380px'; /* Set width */
+  mapContainer.style.height = '150px'; /* Set height */
+  mapContainer.style.marginTop = '20px'; /* Add top margin */
+  mapContainer.style.marginLeft = '-10px'; /* Move left */
+  mapContainer.style.borderRadius = '5px'; /* Round corners */
 
   const popupMapContainer = document.getElementById('popup-map');
-  popupMapContainer.innerHTML = ''; // 기존 지도 초기화
+  popupMapContainer.innerHTML = ''; // Clear existing map
   popupMapContainer.appendChild(mapContainer);
 
   const map = L.map(mapContainer.id, { zoomControl: false }).setView(
@@ -287,18 +268,18 @@ function showPopup(data) {
     }
   ).addTo(map);
 
-  // 팝업 표시
+  // Display popup
   popup.style.display = 'block';
 
-  // 화면 확장
-  document.body.style.width = '220vw'; // 팝업 표시 시 화면 너비 확장
+  // Expand screen
+  document.body.style.width = '220vw'; // Expand screen width when popup is displayed
 }
 
-// 팝업 닫기
+// Close popup
 document.getElementById('close-popup').onclick = () => {
   const popup = document.getElementById('popup');
   popup.style.display = 'none';
 
-  // 화면 크기 복원
-  document.body.style.width = '200vw'; // 팝업 닫힐 때 원래 크기로 복원
+  // Restore screen size
+  document.body.style.width = '200vw'; // Restore to original size when popup is closed
 };
