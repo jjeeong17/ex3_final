@@ -68,7 +68,7 @@
         top: 50px;
         left: 50px;
         margin: 0;
-        white-space: nowrap; /* 줄바꿈 방지 */
+        white-space: nowrap; /* Prevent line breaks */
       }
 
       .ocean-list,
@@ -88,7 +88,7 @@
         position: absolute;
         top: 150px;
         left: 600px;
-        white-space: nowrap; /* 줄바꿈 방지 */
+        white-space: nowrap; /* Prevent line breaks */
       }
 
       .species-list {
@@ -97,7 +97,7 @@
         position: absolute;
         top: 220px;
         left: 500px;
-        white-space: nowrap; /* 줄바꿈 방지 */
+        white-space: nowrap; /* Prevent line breaks */
       }
 
       .archetype-list {
@@ -139,12 +139,12 @@
 
       .popup img {
         margin-top: 18px;
-        margin-bottom: -20px; /* 이미지 아래 여백 줄임 */
-        width: 350px; /* 고정 너비 */
-        height: 250px; /* 고정 높이 */
-        object-fit: contain; /* 비율 유지, 잘림 방지 */
-        border-radius: 5px; /* 약간의 둥근 모서리 */
-        background-color: #f0f0f0; /* 빈 공간에 배경색 추가 */
+        margin-bottom: -20px; /* Reduce bottom margin under the image */
+        width: 350px; /* Fixed width */
+        height: 250px; /* Fixed height */
+        object-fit: contain; /* Maintain aspect ratio, prevent clipping */
+        border-radius: 5px; /* Slightly rounded corners */
+        background-color: #f0f0f0; /* Add background color for empty spaces */
       }
 
       @font-face {
@@ -155,52 +155,52 @@
 
       #popup-common-name {
         font-family: 'Open Sans', sans-serif;
-        font-size: 30px; /* 폰트 크기 */
+        font-size: 30px; /* Font size */
         font-weight: 650;
-        color: #127c91; /* 요청한 색상 */
-        margin-bottom: -6px; /* 제목과의 간격 */
-        white-space: nowrap; /* 줄바꿈 방지 */
+        color: #127c91; /* Requested color */
+        margin-bottom: -6px; /* Adjust spacing with the title */
+        white-space: nowrap; /* Prevent line breaks */
       }
-      /* Title Name 스타일 */
+      /* Title Name Style */
       #popup-title {
         font-family: 'Open Sans', sans-serif;
         font-size: 15px;
-        font-style: italic; /* 이탤릭체 */
-        color: #636363; /* 연한 회색 */
-        margin-bottom: 10px; /* 다른 요소와의 간격 */
+        font-style: italic; /* Italic style */
+        color: #636363; /* Light gray color */
+        margin-bottom: 10px; /* Adjust spacing with other elements */
       }
 
-      /* Label 스타일 (Ocean, Species 등) */
+      /* Label styles (Ocean, Species, etc.) */
       .popup-info p {
-        margin: 8px 0; /* 위아래 간격을 5px로 줄임 */
+        margin: 8px 0; /* Reduce top and bottom spacing to 8px */
       }
 
-      /* Label 스타일 (Ocean, Species 등) */
+      /* Label styles (Ocean, Species, etc.) */
       .popup-info p strong {
         font-family: 'Open Sans', sans-serif;
-        font-size: 15px; /* 라벨 폰트 크기 */
-        color: #636363; /* 회색 */
+        font-size: 15px; /* Font size for labels */
+        color: #636363; /* Gray color */
       }
       @font-face {
         font-family: 'Open Sans';
         src: url('path-to-font/OpenSans-SemiBold.woff2') format('woff2');
         font-weight: 600;
       }
-      /* 값 스타일 */
+      /* Value styles */
       .popup-info p span {
         font-weight: 600;
         font-family: 'Open Sans', sans-serif;
-        font-size: 18px; /* 값 폰트 크기 */
-        color: #127c91; /* 요청한 값 색상 */
+        font-size: 18px; /* Font size for values */
+        color: #127c91; /* Requested color for values */
       }
 
       #popup-map {
         height: 200px;
-        width: 100%; /* 팝업 너비에 맞춤 */
+        width: 100%; /* Fit to popup width */
         margin-top: -13px;
         border-radius: 5px;
 
-        /* 중앙 정렬 */
+        /* Center alignment */
         display: block;
         margin-left: auto;
         margin-right: auto;
@@ -208,16 +208,16 @@
 
       .close-btn {
         position: absolute;
-        top: 6px; /* 팝업 상단 위치 */
-        right: 15px; /* 팝업 오른쪽 위치 */
+        top: 6px; /* Position at the top of the popup */
+        right: 15px; /* Position at the right of the popup */
         width: 27px;
         height: 27px;
-        background-image: url('icon-close-2.png'); /* 기본 아이콘 이미지 */
+        background-image: url('icon-close-2.png'); /* Default close icon */
         background-size: cover;
         background-repeat: no-repeat;
         cursor: pointer;
-        z-index: 1001; /* 팝업보다 위에 표시 */
-        transition: transform 0.2s ease-in-out; /* 클릭 시 애니메이션 효과 */
+        z-index: 1001; /* Display above the popup */
+        transition: transform 0.2s ease-in-out; /* Animation effect on click */
       }
 
       .hidden {
@@ -244,7 +244,7 @@
         <div class="popup-top">
           <img id="popup-image" src="" alt="Fish Image" />
           <div id="close-popup" class="close-btn"></div>
-          <!-- Close 버튼 -->
+          <!-- Close button -->
         </div>
         <div class="popup-bottom">
           <div class="popup-info">
