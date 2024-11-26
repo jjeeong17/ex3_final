@@ -26,6 +26,7 @@ function scrollToCenter(targetElement) {
   });
 }
 
+
 // Common function to update list styles
 function updateListStyles(listSelector, selectedText, dataAttribute) {
   const listItems = document.querySelectorAll(listSelector + ' li');
@@ -227,10 +228,22 @@ function updateCommonNameList(commonNameData) {
   commonNameList.classList.remove('hidden');
 }
 
+//add lines to each list item connecting the items like a flow chart
+
+
+
 // Show popup
 function showPopup(data) {
   const popup = document.getElementById('popup');
-  document.getElementById('popup-image').src = data.thumbnail || 'default.jpg';
+  const popupImage = document.getElementById('popup-image');
+  popupImage.src = data.thumbnail || 'default.jpg';
+  popupImage.onload = () => {
+    const imageRatio = popupImage.naturalWidth / popupImage.naturalHeight;
+    const containerRatio = popupImage.parentElement.clientWidth / popupImage.parentElement.clientHeight;
+    if (imageRatio !== containerRatio) {
+      popupImage.style.backgroundColor = 'white';
+    }
+  };
   document.getElementById('popup-common-name').textContent = data.common_name;
   document.getElementById('popup-title').textContent = data.title;
   document.getElementById('popup-ocean').textContent = data.ocean;
@@ -241,32 +254,52 @@ function showPopup(data) {
   // Initialize map
   const mapContainer = document.createElement('div');
   mapContainer.id = `map-sample-${data.common_name}`; // Create unique ID
-  mapContainer.style.width = '380px'; /* Set width */
-  mapContainer.style.height = '150px'; /* Set height */
-  mapContainer.style.marginTop = '20px'; /* Add top margin */
-  mapContainer.style.marginLeft = '-10px'; /* Move left */
-  mapContainer.style.borderRadius = '5px'; /* Round corners */
+  mapContainer.style.width = '350px'; /* Set width */
+  mapContainer.style.height = '200px'; /* Set height */
+  mapContainer.style.marginTop = '40px'; /* Add top margin */
+  mapContainer.style.marginLeft = '7px'; /* Move left */
+  mapContainer.style.borderRadius = '10px'; /* Round corners */
+  mapContainer.style.fontSize = '14px'; /* Set font size */
 
   const popupMapContainer = document.getElementById('popup-map');
   popupMapContainer.innerHTML = ''; // Clear existing map
   popupMapContainer.appendChild(mapContainer);
 
-  const map = L.map(mapContainer.id, { zoomControl: false }).setView(
-    [parseFloat(data.latitude), parseFloat(data.longitude)],
-    5
-  );
 
-  L.marker([parseFloat(data.latitude), parseFloat(data.longitude)])
-    .addTo(map)
-    .getElement().style.filter = 'grayscale(100%)';
+    // Ensure the map container is properly sized and initialized
+    setTimeout(() => {
+      // Initialize Leaflet map with Stamen Toner tiles
+      popupMap = L.map(mapContainer.id, { zoomControl: false }).setView([data.latitude, data.longitude], 2);
+      L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+        attribution: '<a href="http://stamen.com">Stamen Design</a>',
+        minZoom: 2,
+        maxZoom: 6,
+      }).addTo(popupMap);
+      
+      // Add marker to the map with default icon
+      const defaultIcon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        iconSize: [25, 41], // size of the icon
+        iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+        popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // shadow
+        className: 'default-marker-icon' // Add custom class
+      });
 
-  L.tileLayer(
-    'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-    {
-      attribution: '<a href="http://stamen.com">Stamen Design</a>',
-      maxZoom: 1,
-    }
-  ).addTo(map);
+      // Add custom CSS to remove background and set color to grey
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .default-marker-icon {
+          background: none !important;
+          filter: grayscale(100%);
+        }
+      `;
+      document.head.appendChild(style);
+
+      L.marker([data.latitude, data.longitude], { icon: defaultIcon }).addTo(popupMap).openPopup();
+    }, 0);
+
+      
 
   // Display popup
   popup.style.display = 'block';
