@@ -1,3 +1,5 @@
+
+
 var svg = d3.select("svg")
   .style("display", "block")
   .style("margin", "auto")
@@ -6,6 +8,7 @@ var svg = d3.select("svg")
   width = +svg.attr("width"),
   height = +svg.attr("height"),
   g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  
 
 var stratify = d3.stratify().parentId(function(d) { return d.id.substring(0, d.id.lastIndexOf(".")); });
 
@@ -135,8 +138,6 @@ d3.csv('../data/final_use_updated.csv').then((data) => {
     console.error('Error during stratification or visualization:', error);
   }
 }).catch((error) => console.error('Error processing CSV data:', error));
-
-
 
 
 
