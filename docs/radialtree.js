@@ -17,7 +17,7 @@ var root;
 
 //hierarchy order: ocean - species - archetype
 // load data
-d3.csv('../data/final_use_updated.csv').then((data) => {
+d3.csv('final_use_updated.csv').then((data) => {
   // Step 1: Extract unique oceans, species, and archetypes to create hierarchical nodes
   const fishNode = {
     id: 'Fish',
