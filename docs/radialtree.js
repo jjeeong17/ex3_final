@@ -16,8 +16,8 @@ var cluster = d3.cluster().size([360, Math.min(width, height) / 2 + 5000]); // a
 var root;
 
 //hierarchy order: ocean - species - archetype
-// load data
-d3.csv('../data/final_use_updated.csv').then((data) => {
+// load data 
+d3.csv('data/final_use_updated.csv').then((data) => {
   // Step 1: Extract unique oceans, species, and archetypes to create hierarchical nodes
   const fishNode = {
     id: 'Fish',
