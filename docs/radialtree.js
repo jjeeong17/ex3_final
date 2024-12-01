@@ -443,6 +443,17 @@ const zoom = d3.zoom()
 svg.call(zoom);
 
 
+//credits bottom left 
+const footerText = d3.select("body").append("div")
+  .style("position", "absolute")
+  .style("bottom", "-8px")
+  .style("left", "85px")
+  .style("font-family", "Open Sans")
+  .style("font-size", "14px")
+  .style("color", "#333")
+  .style("opacity", "90%")
+  .style("font-weight", "bold")
+  .html("Data Visualisation | MS1 | Fall '24 <br> Exercise 3: Interactivity |  Hyeonjeong | Xuan");
 
 
 
