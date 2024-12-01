@@ -178,8 +178,18 @@ d3.csv('../data/final_use_updated.csv').then((data) => {
       .attr("dx", d => d.depth > 2 ? "0.5em" : "0") // Adjust spacing for child nodes only
       .style("fill", "#5a5a5a");
 
-  
-      //default load page to scroll to "fish"
+      // Add emoji to the fish node
+      node.filter(d => d.depth === 0).append("text")
+        .attr("dy", ".31em")
+        .attr("x", -130)
+        .attr("text-anchor", "left")
+        .style("font-size", "89px")
+        .style("opacity", 0)
+        .transition()
+        .duration(250)
+        .style("opacity", 1)
+        .text("🐟"); 
+
       document.addEventListener("DOMContentLoaded", function() {
       const fishNode = d3.select(".node").filter(d => d.depth === 0).node();
       if (fishNode) {
@@ -259,7 +269,125 @@ d3.csv('../data/final_use_updated.csv').then((data) => {
     const translate = event.transform;
     insetWindow.attr("transform", `translate(${(-translate.x / scale) / 60 + 100}, ${(-translate.y / scale) / 60 + 100}) scale(${1 / scale})`);
   }));
-``
+
+
+
+  //hover over to highlight the path to the fish, grey out the rest of the nodes + show their nameSci in opensans semi-condensed
+  node.filter(d => d.depth > 2).on("mouseover", function(event, d) {
+  
+  // Highlight hovered node to the root
+  let current = d;
+  while (current) {
+    d3.selectAll(".node").filter(n => n === current).select("circle").style("fill", "#188d8d");
+    d3.selectAll(".link").filter(l => l.target === current).style("stroke", "#188d8d");
+    current = current.parent;
+  }
+
+  // Grey out the rest of the nodes and paths
+  node.filter(n => !d.ancestors().includes(n))
+    .select("circle")
+    .style("opacity", 0.1);
+
+  g.selectAll(".link")
+    .filter(l => !d.ancestors().includes(l.target))
+    .style("opacity", 0.1);
+
+  // Show the scientific name
+  d3.select(this).select("text")
+    .text(d.data.nameSci)
+    .style("font-family", "Open Sans SemiCondensed")
+    .style("fill", "#188d8d");
+  })
+  .on("mouseout", function(event, d) {
+  
+  // Reset the path to the root
+  let current = d;
+  while (current) {
+    d3.select(current.node).select("circle").style("fill", "#f67a0a");
+    current = current.parent;
+  }
+
+  // Reset the opacity and color of the rest of the nodes
+  node.select("circle").style("opacity", 1).style("fill", "#f67a0a");
+  g.selectAll(".link").style("opacity", 1);
+
+  // Reset the text, font, and color
+  d3.select(this).select("text")
+    .text(d.data.name)
+    .style("font-family", "inherit")
+    .style("fill", "#5a5a5a");
+  });
+
+
+
+  //search bar with dropdown suggestions to search for a specific fish - top left corner
+  const searchContainer = d3.select("body").append("div")
+  .style("position", "absolute")
+  .style("top", "65px")
+  .style("left", "30px")
+  .style("width", "300px")
+  .style("background", "white")
+  .style("border", "1px solid #ccc")
+  .style("border-radius", "25px")
+  .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+  .style("padding", "10px")
+  .style("opacity", "90%");
+
+  const searchInput = searchContainer.append("input")
+  .attr("type", "text")
+  .attr("placeholder", " Explore Societies Underwater...")
+  .style("width", "97%")
+  .style("padding", "5px")
+  .style("border", "0px solid #ccc")
+  .style("border-radius", "20px")
+  .style("font-family", "Open Sans")
+  .style("font-size", "16px")
+  .style("font-weight", "bold")
+  .style("color", "#333");
+
+  const suggestionsContainer = searchContainer.append("div")
+  .style("position", "absolute")
+  .style("top", "40px")
+  .style("left", "10px")
+  .style("width", "300px")
+  .style("background", "white")
+  .style("border", "1px solid #ccc")
+  .style("border-radius", "5px")
+  .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+  .style("max-height", "200px")
+  .style("overflow-y", "auto")
+  .style("display", "none")
+  .style("opacity", "90%");
+
+  searchInput.on("input", function() {
+  const query = this.value.toLowerCase();
+  const suggestions = validatedData.filter(d => d.name.toLowerCase().includes(query) || d.nameSci.toLowerCase().includes(query));
+
+  suggestionsContainer.style("display", suggestions.length ? "block" : "none");
+  suggestionsContainer.selectAll("div").remove();
+
+  suggestionsContainer.selectAll("div")
+    .data(suggestions)
+    .enter().append("div")
+    .style("padding", "10px")
+    .style("cursor", "pointer")
+    .style("border-bottom", "1px solid #ccc")
+    .style("font-family", "Open Sans")
+    .style("font-weight", "bold")
+    .style("opacity", "0.9")
+    .html(d => `<span style="color: #f67a0a;">${d.name}</span> - ${d.nameSci}`)
+    .on("click", function(d) {
+      const node = g.selectAll(".node").filter(n => n.data.id === d.id).node();
+      if (node) {
+        node.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+        d3.select(node).select("circle").style("fill", "red").style("stroke", "none");
+        setTimeout(() => d3.select(node).select("circle").style("fill", "#f67a0a"), 2000);
+      }
+      searchInput.property("value", "");
+      suggestionsContainer.style("display", "none");
+    });
+  });
+
 
   } catch (error) {
     console.error('Error during stratification or visualization:', error);
@@ -280,11 +408,26 @@ function diagonal(d) {
 
 
 //reset button to show entire visualization circle - bottom left corner
-const resetButton = d3.select("body").append("button")
-  .text("Reset View")
+const resetButtonContainer = d3.select("body").append("div")
   .style("position", "absolute")
-  .style("bottom", "-10px")
-  .style("left", "50px")
+  .style("bottom", "-5px")
+  .style("left", "30px")
+  .style("width", "30px")
+  .style("height", "30px")
+  .style("background", "white")
+  .style("border", "1px solid #ccc")
+  .style("border-radius", "5px")
+  .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+  .style("display", "flex")
+  .style("align-items", "center")
+  .style("justify-content", "center")
+  .style("cursor", "pointer")
+  .style("opacity", "90%");
+
+const resetButton = resetButtonContainer.append("img")
+  .attr("src", "home.svg")
+  .style("width", "20px")
+  .style("height", "20px")
   .on("click", () => {
     svg.transition()
       .duration(750)
@@ -304,17 +447,12 @@ svg.call(zoom);
 
 
 
-//search bar to search for a specific fish - top left corner
 
 
-//page style
-//fish swimming background animation
+//search reuslt to open window to show more information of each fish
+//window to show more information of each fish
 
-//floating entire visualization, not static
 
 // rotate to orientate text to be upright?
-
-//toolip for each node to show more information of each fish
-//hover over to highlight the path to the fish, grey out the rest of the nodes + their nameSci
-
+//floating entire visualization, not static
 //transition animation to side scrolling instead of radial viz
