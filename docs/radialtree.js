@@ -93,6 +93,13 @@ d3.csv('final_use_updated.csv').then((data) => {
     // Step 6: Proceed with clustering and visualization
     cluster(root);
 
+    function diagonal(d) {
+      return "M" + project(d.x, d.y) +
+        "C" + project(d.x, (d.y + d.parent.y) / 2) +
+        " " + project(d.parent.x, (d.y + d.parent.y) / 2) +
+        " " + project(d.parent.x, d.parent.y);
+    }
+
     const link = g.selectAll(".link")
       .data(root.descendants().slice(1));
 
@@ -280,8 +287,15 @@ d3.csv('final_use_updated.csv').then((data) => {
   // Highlight hovered node to the root
   let current = d;
   while (current) {
-    d3.selectAll(".node").filter(n => n === current).select("circle").style("fill", "#188d8d");
-    g.selectAll(".link").filter(l => l.target === current).style("stroke", "#188d8d");
+    d3.selectAll(".node")
+      .filter(n => n === current)
+      .select("circle")
+      .style("fill", "#188d8d");
+    g.selectAll(".link")
+      .filter(l => l.target === current)
+      .style("stroke", "#188d8d")
+      .style("opacity", 1);
+      console.log(current);
     current = current.parent;
   }
 
@@ -305,7 +319,10 @@ d3.csv('final_use_updated.csv').then((data) => {
   // Reset the path to the root
   let current = d;
   while (current) {
-    d3.select(current.node).select("circle").style("fill", "#f67a0a");
+    d3.selectAll(".node")
+      .filter(n => n === current)
+      .select("circle")
+      .style("fill", "#f67a0a");
     current = current.parent;
   }
 
@@ -593,16 +610,6 @@ d3.csv('final_use_updated.csv').then((data) => {
   }
 
 }).catch((error) => console.error('Error processing CSV data:', error));
-
-
-
-  
-function diagonal(d) {
-  return "M" + project(d.x, d.y) +
-    "C" + project(d.x, (d.y + d.parent.y) / 2) +
-    " " + project(d.parent.x, (d.y + d.parent.y) / 2) +
-    " " + project(d.parent.x, d.parent.y);
-}
 
 
 
