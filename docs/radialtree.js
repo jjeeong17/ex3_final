@@ -478,7 +478,8 @@ d3.csv('final_use_updated.csv').then((data) => {
 
   searchInput.on("input", function() {
   const query = this.value.toLowerCase();
-  const suggestions = validatedData.filter(d => d.name.toLowerCase().includes(query) || d.nameSci.toLowerCase().includes(query));
+  const suggestions = validatedData.filter(d => d.name.toLowerCase().includes(query) || d.nameSci.toLowerCase().includes(query))
+    .filter(d => d.name.toLowerCase() !== d.nameSci.toLowerCase());
 
   suggestionsContainer.style("display", suggestions.length ? "block" : "none");
   suggestionsContainer.selectAll("div").remove();
