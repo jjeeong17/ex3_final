@@ -1,5 +1,4 @@
-https://jjeeong17.github.io/ex3_final/
-#mock
+#UImockups
 
 <img width="513" alt="스크린샷 2024-11-14 오후 1 41 29" src="https://github.com/user-attachments/assets/1b8fe628-654d-4d4c-951c-be4bb87b9781"><br>
 
@@ -11,8 +10,7 @@ https://jjeeong17.github.io/ex3_final/
 
 <img width="296" alt="스크린샷 2024-11-14 오후 1 42 17" src="https://github.com/user-attachments/assets/899ba3dd-1132-4c05-a656-cbeac0335bb0"> <br>
 
-#sketch
-#1
+#sketch1
 
 <img width="380" alt="스크린샷 2024-11-12 오후 12 06 44" src="https://github.com/user-attachments/assets/700bb472-8cb5-4498-91e0-627bb7b61c4e"> <br>
 
