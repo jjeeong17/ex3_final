@@ -202,8 +202,8 @@ d3.csv('final_use_updated.csv').then((data) => {
       });
 
   //a map inset of the whole visualisation with a dynamic window that moves to show where we are on the visualization as the user pans - to be on the bottom right
-  const insetWidth = 200;
-  const insetHeight = 200;
+  const insetWidth = 220;
+  const insetHeight = 220;
 
   const insetSvg = d3.select("body").append("svg")
     .attr("width", insetWidth)
@@ -257,11 +257,10 @@ d3.csv('final_use_updated.csv').then((data) => {
     .attr("height", insetHeight / 8)
     .attr("x", -10)
     .attr("y", -10)
-    .style("fill", "none")
-    .style("stroke", "#f67a0a")
-    .style("stroke-width", "2px")
-    .attr("rx", 1)
-    .attr("ry", 1);
+    .style("fill", "#188d8d")
+    .style("opacity", 0.7)
+    .attr("rx", 2)
+    .attr("ry", 2);
 
   svg.call(zoom.on("zoom", (event) => {
     g.attr("transform", event.transform.translate(600, 470));
@@ -316,6 +315,96 @@ d3.csv('final_use_updated.csv').then((data) => {
     .text(d.data.name)
     .style("font-family", "inherit")
     .style("fill", "#5a5a5a");
+  })
+  .on("click", function(event, d) { // Clicking on a node to open a window to show more info
+    const selectedFish = data.find(fish => `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(fish)}` === d.id);
+    if (selectedFish) {
+      const infoWindow = d3.select("body").append("div")
+        .style("position", "absolute")
+        .style("top", "70px")
+        .style("right", "20px")
+        .style("width", "400px")
+        .style("background", "white")
+        .style("border", "1px solid #ccc")
+        .style("border-radius", "15px")
+        .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+        .style("padding", "10px")
+        .style("opacity", "90%");
+
+      infoWindow.append("img")
+        .attr("src", selectedFish.thumbnail)
+        .style("width", "100%")
+        .style("border-radius", "7px")
+        .style("margin-bottom", "0.5em");
+
+      infoWindow.append("html")
+        .style("font-family", "Open Sans")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .style("color", "#333")
+        .html(`<span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold;">${selectedFish.common_name}</span> 
+          <br> 
+          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: italic; margin-bottom: 1em;">${selectedFish.title}</span>
+          <br><br> Ocean
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}</span>
+          <br> Species
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}</span>
+          <br> Archetype
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}</span>
+          <br><br> 
+          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: regular; margin-bottom: 1em;">Habitat Location 
+          </span>`);
+
+      infoWindow.append("img")
+        .attr("src", "cross.svg")
+        .style("width", "20px")
+        .style("height", "20px")
+        .style("position", "absolute")
+        .style("top", "20px")
+        .style("right", "20px")
+        .style("opacity", "90%")
+        .style("filter", "invert(70%)")
+        .style("cursor", "pointer")
+        .on("click", () => infoWindow.remove());
+
+      infoWindow.append("div") // Stamen Toner tiles
+      const mapContainer = infoWindow.append("div")
+        .attr("id", "map")
+        .style("width", "100%")
+        .style("height", "200px")
+        .style("border-radius", "7px");
+
+      setTimeout(() => {
+        const popupMap = L.map(mapContainer.node(), { zoomControl: false }).setView([selectedFish.latitude, selectedFish.longitude], 2);
+        L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+          attribution: '<a href="http://stamen.com">Stamen Design</a>',
+          minZoom: 2,
+          maxZoom: 6,
+        }).addTo(popupMap);
+
+        // Add marker to the map with default icon
+        const defaultIcon = L.icon({
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+          iconSize: [25, 41], // size of the icon
+          iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+          popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // shadow
+          className: 'default-marker-icon' // Add custom class
+        });
+
+        // Add custom CSS to remove background and set color to grey
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .default-marker-icon {
+            background: none !important;
+            filter: grayscale(100%);
+          }
+        `;
+        document.head.appendChild(style);
+
+        L.marker([selectedFish.latitude, selectedFish.longitude], { icon: defaultIcon }).addTo(popupMap).openPopup();
+      }, 0);
+    }
   });
 
 
@@ -376,15 +465,114 @@ d3.csv('final_use_updated.csv').then((data) => {
     .style("font-weight", "bold")
     .style("opacity", "0.9")
     .html(d => `<span style="color: #f67a0a;">${d.name}</span> - ${d.nameSci}`)
-    .on("click", function(d) {
+    .on("click", function(event) {
+      const d = d3.select(this).datum();
       const node = g.selectAll(".node").filter(n => n.data.id === d.id).node();
       if (node) {
-        node.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-        d3.select(node).select("circle").style("fill", "red").style("stroke", "none");
-        setTimeout(() => d3.select(node).select("circle").style("fill", "#f67a0a"), 2000);
+      node.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      d3.select(node).select("circle").style("fill", "red").style("stroke", "none");
+      setTimeout(() => d3.select(node).select("circle").style("fill", "#f67a0a"), 2000);
       }
       searchInput.property("value", "");
       suggestionsContainer.style("display", "none");
+
+      // Clicking on a suggestion to open a window to show more info
+      const selectedFish = data.find(fish => `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(fish)}` === d.id);
+      if (selectedFish) {
+      const infoWindow = d3.select("body").append("div")
+        .style("position", "absolute")
+        .style("top", "70px")
+        .style("right", "20px")
+        .style("width", "400px")
+        .style("background", "white")
+        .style("border", "1px solid #ccc")
+        .style("border-radius", "15px")
+        .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+        .style("padding", "10px")
+        .style("opacity", "90%");
+
+      infoWindow.append("img")
+        .attr("src", selectedFish.thumbnail)
+        .style("width", "100%")
+        .style("border-radius", "7px")
+        .style("margin-bottom", "0.5em");
+
+      infoWindow.append("html")
+        .style("font-family", "Open Sans")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .style("color", "#333")
+        .html(`<span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold;">${selectedFish.common_name}</span> 
+          <br> 
+          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: italic; margin-bottom: 1em;">${selectedFish.title}</span>
+          <br><br> Ocean
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}</span>
+          <br> Species
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}</span>
+          <br> Archetype
+          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}</span>
+          <br><br> 
+          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: regular; margin-bottom: 1em;">Habitat Location 
+          </span>`);
+
+      infoWindow.append("img")
+        .attr("src", "cross.svg")
+        .style("width", "20px")
+        .style("height", "20px")
+        .style("position", "absolute")
+        .style("top", "20px")
+        .style("right", "20px")
+        .style("opacity", "90%")
+        .style("filter", "invert(70%)")
+        .style("cursor", "pointer")
+        .on("click", () => infoWindow.remove());
+
+      infoWindow.append("div") // Stamen Toner tiles
+      const mapContainer = infoWindow.append("div")
+        .attr("id", "map")
+        .style("width", "100%")
+        .style("height", "200px")
+        .style("border-radius", "7px");
+        // .style("margin-top", "1em")
+
+      setTimeout(() => {
+        const popupMap = L.map(mapContainer.node(), { zoomControl: false }).setView([selectedFish.latitude, selectedFish.longitude], 2);
+        L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+          attribution: '<a href="http://stamen.com">Stamen Design</a>',
+          minZoom: 2,
+          maxZoom: 6,
+        }).addTo(popupMap);
+
+        // Add marker to the map with default icon
+        const defaultIcon = L.icon({
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+          iconSize: [25, 41], // size of the icon
+          iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+          popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // shadow
+          className: 'default-marker-icon' // Add custom class
+        });
+
+        // Add custom CSS to remove background and set color to grey
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .default-marker-icon {
+            background: none !important;
+            filter: grayscale(100%);
+          }
+        `;
+        document.head.appendChild(style);
+
+        L.marker([selectedFish.latitude, selectedFish.longitude], { icon: defaultIcon }).addTo(popupMap).openPopup();
+      }, 0);
+
+      }
+
+
+
+
+
+
     });
   });
 
@@ -456,14 +644,11 @@ const footerText = d3.select("body").append("div")
   .html("Data Visualisation | MS1 | Fall '24 <br> Exercise 3: Interactivity |  Hyeonjeong | Xuan");
 
 
+//fix lines hover
 
+//floating entire visualization, not static upload page load
 
-
-
-//search reuslt to open window to show more information of each fish
-//window to show more information of each fish
 
 
 // rotate to orientate text to be upright?
-//floating entire visualization, not static
 //transition animation to side scrolling instead of radial viz
