@@ -93,6 +93,13 @@ d3.csv('final_use_updated.csv').then((data) => {
     // Step 6: Proceed with clustering and visualization
     cluster(root);
 
+    function diagonal(d) {
+      return "M" + project(d.x, d.y) +
+        "C" + project(d.x, (d.y + d.parent.y) / 2) +
+        " " + project(d.parent.x, (d.y + d.parent.y) / 2) +
+        " " + project(d.parent.x, d.parent.y);
+    }
+
     const link = g.selectAll(".link")
       .data(root.descendants().slice(1));
 
@@ -275,28 +282,36 @@ d3.csv('final_use_updated.csv').then((data) => {
 
   //hover over to highlight the path to the fish, grey out the rest of the nodes + show their nameSci in opensans semi-condensed
   node.filter(d => d.depth > 2).on("mouseover", function(event, d) {
-  
+      
+    
   // Highlight hovered node to the root
   let current = d;
   while (current) {
-    d3.selectAll(".node").filter(n => n === current).select("circle").style("fill", "#188d8d");
-    d3.selectAll(".link").filter(l => l.target === current).style("stroke", "#188d8d");
+    d3.selectAll(".node")
+      .filter(n => n === current)
+      .select("circle")
+      .style("fill", "#188d8d");
+    g.selectAll(".link")
+      .filter(l => l.target === current)
+      .style("stroke", "#188d8d")
+      .style("opacity", 1);
+      console.log(current);
     current = current.parent;
   }
 
   // Grey out the rest of the nodes and paths
   node.filter(n => !d.ancestors().includes(n))
     .select("circle")
-    .style("opacity", 0.1);
+    .style("opacity", 0.01);
 
   g.selectAll(".link")
     .filter(l => !d.ancestors().includes(l.target))
-    .style("opacity", 0.1);
+    .style("opacity", 0.01);
 
   // Show the scientific name
   d3.select(this).select("text")
     .text(d.data.nameSci)
-    .style("font-family", "Open Sans SemiCondensed")
+    .style("font-family", "Futura")
     .style("fill", "#188d8d");
   })
   .on("mouseout", function(event, d) {
@@ -304,7 +319,10 @@ d3.csv('final_use_updated.csv').then((data) => {
   // Reset the path to the root
   let current = d;
   while (current) {
-    d3.select(current.node).select("circle").style("fill", "#f67a0a");
+    d3.selectAll(".node")
+      .filter(n => n === current)
+      .select("circle")
+      .style("fill", "#f67a0a");
     current = current.parent;
   }
 
@@ -331,7 +349,13 @@ d3.csv('final_use_updated.csv').then((data) => {
         .style("border-radius", "15px")
         .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
         .style("padding", "10px")
-        .style("opacity", "90%");
+        .style("opacity", "90%")
+        .attr("draggable", true)
+        .call(d3.drag().on("drag", function(event) {
+          d3.select(this)
+            .style("top", (event.y - 20) + "px")
+            .style("left", (event.x - 200) + "px");
+        }));
 
       infoWindow.append("img")
         .attr("src", selectedFish.thumbnail)
@@ -454,7 +478,8 @@ d3.csv('final_use_updated.csv').then((data) => {
 
   searchInput.on("input", function() {
   const query = this.value.toLowerCase();
-  const suggestions = validatedData.filter(d => d.name.toLowerCase().includes(query) || d.nameSci.toLowerCase().includes(query));
+  const suggestions = validatedData.filter(d => d.name.toLowerCase().includes(query) || d.nameSci.toLowerCase().includes(query))
+    .filter(d => d.name.toLowerCase() !== d.nameSci.toLowerCase());
 
   suggestionsContainer.style("display", suggestions.length ? "block" : "none");
   suggestionsContainer.selectAll("div").remove();
@@ -589,16 +614,6 @@ d3.csv('final_use_updated.csv').then((data) => {
 
 
 
-  
-function diagonal(d) {
-  return "M" + project(d.x, d.y) +
-    "C" + project(d.x, (d.y + d.parent.y) / 2) +
-    " " + project(d.parent.x, (d.y + d.parent.y) / 2) +
-    " " + project(d.parent.x, d.parent.y);
-}
-
-
-
 //reset button to show entire visualization circle - bottom left corner
 const resetButtonContainer = d3.select("body").append("div")
   .style("position", "absolute")
@@ -662,6 +677,4 @@ const footerText = d3.select("body").append("div")
 
 //fix lines hover
 
-
-// rotate to orientate text to be upright?
-//transition animation to side scrolling instead of radial viz
+// toggle button at bottom left corner - animation to unroll radial tree to linear view - side scrolling viz
