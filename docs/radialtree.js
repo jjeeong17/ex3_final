@@ -275,28 +275,29 @@ d3.csv('final_use_updated.csv').then((data) => {
 
   //hover over to highlight the path to the fish, grey out the rest of the nodes + show their nameSci in opensans semi-condensed
   node.filter(d => d.depth > 2).on("mouseover", function(event, d) {
-  
+      
+    
   // Highlight hovered node to the root
   let current = d;
   while (current) {
     d3.selectAll(".node").filter(n => n === current).select("circle").style("fill", "#188d8d");
-    d3.selectAll(".link").filter(l => l.target === current).style("stroke", "#188d8d");
+    g.selectAll(".link").filter(l => l.target === current).style("stroke", "#188d8d");
     current = current.parent;
   }
 
   // Grey out the rest of the nodes and paths
   node.filter(n => !d.ancestors().includes(n))
     .select("circle")
-    .style("opacity", 0.1);
+    .style("opacity", 0.01);
 
   g.selectAll(".link")
     .filter(l => !d.ancestors().includes(l.target))
-    .style("opacity", 0.1);
+    .style("opacity", 0.01);
 
   // Show the scientific name
   d3.select(this).select("text")
     .text(d.data.nameSci)
-    .style("font-family", "Open Sans SemiCondensed")
+    .style("font-family", "Futura")
     .style("fill", "#188d8d");
   })
   .on("mouseout", function(event, d) {
@@ -331,7 +332,13 @@ d3.csv('final_use_updated.csv').then((data) => {
         .style("border-radius", "15px")
         .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
         .style("padding", "10px")
-        .style("opacity", "90%");
+        .style("opacity", "90%")
+        .attr("draggable", true)
+        .call(d3.drag().on("drag", function(event) {
+          d3.select(this)
+            .style("top", (event.y - 20) + "px")
+            .style("left", (event.x - 200) + "px");
+        }));
 
       infoWindow.append("img")
         .attr("src", selectedFish.thumbnail)
@@ -662,6 +669,4 @@ const footerText = d3.select("body").append("div")
 
 //fix lines hover
 
-
-// rotate to orientate text to be upright?
-//transition animation to side scrolling instead of radial viz
+// toggle button at bottom left corner - animation to unroll radial tree to linear view - side scrolling viz
