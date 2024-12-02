@@ -215,6 +215,8 @@ d3.csv('final_use_updated.csv').then((data) => {
     .style("border-radius", "10px")
     .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
     .style("background", "white")
+    .style('animation', 'float 6s ease-in-out infinite')
+    .style('transition', 'top 0.5s ease-out')
     .style("opacity", "90%");
 
   const insetG = insetSvg.append("g")
@@ -420,6 +422,8 @@ d3.csv('final_use_updated.csv').then((data) => {
   .style("border-radius", "25px")
   .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
   .style("padding", "10px")
+  .style('animation', 'float 6s ease-in-out infinite')
+  .style('transition', 'top 0.5s ease-out')
   .style("opacity", "90%");
 
   const searchInput = searchContainer.append("input")
@@ -610,6 +614,8 @@ const resetButtonContainer = d3.select("body").append("div")
   .style("align-items", "center")
   .style("justify-content", "center")
   .style("cursor", "pointer")
+  .style('animation', 'float 6s ease-in-out infinite')
+  .style('transition', 'top 0.5s ease-out')
   .style("opacity", "90%");
 
 const resetButton = resetButtonContainer.append("img")
@@ -630,6 +636,14 @@ const zoom = d3.zoom()
 
 svg.call(zoom);
 
+// floating animation
+d3.select("head").append("style").text(`
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translate(7px, -5px); }
+    100% { transform: translateY(0); }
+  }
+`);
 
 //credits bottom left 
 const footerText = d3.select("body").append("div")
@@ -641,13 +655,12 @@ const footerText = d3.select("body").append("div")
   .style("color", "#333")
   .style("opacity", "90%")
   .style("font-weight", "bold")
+  .style('animation', 'float 6s ease-in-out infinite')
+  .style('transition', 'top 0.5s ease-out')
   .html("Data Visualisation | MS1 | Fall '24 <br> Exercise 3: Interactivity |  Hyeonjeong | Xuan");
 
 
 //fix lines hover
-
-//floating entire visualization, not static upload page load
-
 
 
 // rotate to orientate text to be upright?
