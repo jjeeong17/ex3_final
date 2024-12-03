@@ -374,21 +374,25 @@ d3.csv('final_use_updated.csv')
       node
         .filter((d) => d.depth > 2)
         .on('mouseover', function (event, d) {
-          // Highlight hovered node to the root
-          let current = d;
-          while (current) {
-            // console.log(current);
+            // Highlight hovered node to the root
+            let current = d;
+            while (current) {
             d3.selectAll('.node')
               .filter((n) => n === current)
               .select('circle')
               .style('fill', '#188d8d');
             g.selectAll('.link')
               .filter((l) => l === current)
-              // .style('stroke', '#188d8d')
+              .style('stroke', '#188d8d')
               .style('opacity', 1);
-            // console.log(current);
             current = current.parent;
-          }
+            }
+
+          // increase text size to 64px
+          d3.select(this)
+            .select('text')
+            .style('font-size', '128px');
+
 
           // Grey out the rest of the nodes and paths
           node
@@ -418,9 +422,20 @@ d3.csv('final_use_updated.csv')
             current = current.parent;
           }
 
-          // Reset the opacity and color of the rest of the nodes
+            //text back to original size
+            d3.select(this)
+            .select('text')
+            .style('font-size', (d) => {
+              if (d.depth === 0) return '192px'; // font size for master "fish"
+              if (d.depth === 1) return '96px'; // font size for parent nodes
+              if (d.depth === 2) return '64px'; // font size for species nodes
+              return '14px'; // font size for child nodes
+            });
+
+   
+          // reset node opacity and colour
           node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
-          g.selectAll('.link').style('opacity', 1);
+          g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');;
 
           // Reset the text, font, and color
           d3.select(this)
@@ -532,7 +547,7 @@ d3.csv('final_use_updated.csv')
                 className: 'default-marker-icon', // Add custom class
               });
 
-              // Add custom CSS to remove background and set color to grey
+              // remove background and set color to grey
               const style = document.createElement('style');
               style.innerHTML = `
           .default-marker-icon {
@@ -671,7 +686,16 @@ d3.csv('final_use_updated.csv')
                 .style('border-radius', '15px')
                 .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
                 .style('padding', '10px')
-                .style('opacity', '90%');
+                .style('opacity', '90%')
+                .attr('draggable', true)
+                .call(
+                  d3.drag().on('drag', function (event) {
+                    d3.select(this)
+                      .style('top', event.y - 20 + 'px')
+                      .style('left', event.x - 200 + 'px');
+                  })
+                );
+                
 
               infoWindow
                 .append('img')
@@ -747,7 +771,7 @@ d3.csv('final_use_updated.csv')
                   className: 'default-marker-icon', // Add custom class
                 });
 
-                // Add custom CSS to remove background and set color to grey
+                //remove background and set color to grey
                 const style = document.createElement('style');
                 style.innerHTML = `
           .default-marker-icon {
@@ -837,7 +861,3 @@ const footerText = d3
   .html(
     "Data Visualisation | MS1 | Fall '24 <br> Exercise 3: Interactivity |  Hyeonjeong | Xuan"
   );
-
-//fix lines hover
-
-// toggle button at bottom left corner - animation to unroll radial tree to linear view - side scrolling viz
