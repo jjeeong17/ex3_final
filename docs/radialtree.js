@@ -445,6 +445,8 @@ d3.csv('final_use_updated.csv')
             .style('fill', '#5a5a5a');
         })
         .on('click', function (event, d) {
+
+
           // Clicking on a node to open a window to show more info
           const selectedFish = data.find(
             (fish) =>
@@ -563,6 +565,10 @@ d3.csv('final_use_updated.csv')
                 .addTo(popupMap)
                 .openPopup();
             }, 0);
+            //highlight the clicked node and path 
+            //windows to move on parts of the screen based on parent node
+            //windows to offset so they dont completely overlap
+            
           }
         });
 
