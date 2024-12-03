@@ -19,3 +19,4 @@ The word map is a dynamic visualization that classifies fish species by their na
 ![win](https://github.com/user-attachments/assets/4aac1766-9bef-43c9-a3e0-d7dcdd3faadb)
 
 ## Hover
+![hover](https://github.com/user-attachments/assets/cf11b9d3-03ed-4f29-8e05-7ea2b829008f)
