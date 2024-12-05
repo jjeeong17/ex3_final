@@ -4,7 +4,7 @@ Moving forward to explore the translation of fish scientific names to their comm
 The word map is a dynamic visualization that classifies fish species by their native oceans and archetypes, such as predators, scavengers, or reef dwellers, while translating their scientific names into common names for accessibility. Organized into distinct regions, the map highlights the biodiversity of aquatic life in each ocean, from the Atlantic to the Pacific. It bridges scientific taxonomy and practical understanding, showcasing the relationships between species, their ecological roles, and geographic distribution.
 
 ## Cover
-![cover](https://github.com/user-attachments/assets/c630653f-80e0-46d9-8833-c19039efebbd)
+![Screenshot 2024-12-05 134821](https://github.com/user-attachments/assets/884dad87-1c8e-42ed-ad63-327f36871a1c)
 
 ## Home
 ![home](https://github.com/user-attachments/assets/5d38651f-f957-48ef-8c4a-82144bb391b4)
