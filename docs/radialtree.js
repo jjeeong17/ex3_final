@@ -443,9 +443,11 @@ d3.csv('final_use_updated.csv')
             .text(d.data.name)
             .style('font-family', 'inherit')
             .style('fill', '#5a5a5a');
-        })
+        });
+       
+        node
+        .filter((d) => d.depth > 2)
         .on('click', function (event, d) {
-
 
           // Clicking on a node to open a window to show more info
           const selectedFish = data.find(
@@ -454,7 +456,19 @@ d3.csv('final_use_updated.csv')
                 fish.archetype
               }.${data.indexOf(fish)}` === d.id
           );
-          if (selectedFish) {
+            if (selectedFish) {
+
+            d3.selectAll('selectedFish.node')
+              .filter((n) => n === current)
+              .select('circle')
+              .style('fill', '#188d8d');
+            g.selectAll('selectedFish.link')
+              .filter((l) => l === current)
+              .style('stroke', '#188d8d');
+              
+            //highlight lines and nodes to the root, Show the scientific name at 64px, restore original after infowindow is closed
+
+            //every new infowindows to offset y axis by 10px so they dont completely overlap
             const infoWindow = d3
               .select('body')
               .append('div')
@@ -565,9 +579,7 @@ d3.csv('final_use_updated.csv')
                 .addTo(popupMap)
                 .openPopup();
             }, 0);
-            //highlight the clicked node and path 
             //windows to move on parts of the screen based on parent node
-            //windows to offset so they dont completely overlap
             
           }
         });
