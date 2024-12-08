@@ -378,8 +378,8 @@ d3.csv('final_use_updated.csv')
 
       node
         .filter((d) => d.depth > 2)
-        .on('mouseover', function (event, d) {
-          // Highlight hovered node to the root
+        .on('click', function (event, d) {
+          // Highlight hovered node to the root 
           let current = d;
           while (current) {
             d3.selectAll('.node')
@@ -393,7 +393,7 @@ d3.csv('final_use_updated.csv')
             current = current.parent;
           }
 
-          // increase text size to 64px
+          // increase text size to 128px
           d3.select(this).select('text').style('font-size', '128px');
 
           // Grey out the rest of the nodes and paths
@@ -412,40 +412,42 @@ d3.csv('final_use_updated.csv')
             .text(d.data.nameSci)
             .style('font-family', 'Futura')
             .style('fill', '#188d8d');
-        })
-        .on('mouseout', function (event, d) {
-          // Reset the path to the root
-          let current = d;
-          while (current) {
-            d3.selectAll('.node')
-              .filter((n) => n === current)
-              .select('circle')
-              .style('fill', '#f67a0a');
-            current = current.parent;
-          }
+        // })
+        // .on('mouseout', function (event, d) {
+        //   // Reset the path to the root
+        //   let current = d;
+        //   while (current) {
+        //     d3.selectAll('.node')
+        //       .filter((n) => n === current)
+        //       .select('circle')
+        //       .style('fill', '#f67a0a');
+        //     current = current.parent;
+        //   }
 
-          //text back to original size
-          d3.select(this)
-            .select('text')
-            .style('font-size', (d) => {
-              if (d.depth === 0) return '192px'; // font size for master "fish"
-              if (d.depth === 1) return '96px'; // font size for parent nodes
-              if (d.depth === 2) return '64px'; // font size for species nodes
-              return '14px'; // font size for child nodes
-            });
+        //   //text back to original size
+        //   d3.select(this)
+        //     .select('text')
+        //     .style('font-size', (d) => {
+        //       if (d.depth === 0) return '192px'; // font size for master "fish"
+        //       if (d.depth === 1) return '96px'; // font size for parent nodes
+        //       if (d.depth === 2) return '64px'; // font size for species nodes
+        //       return '14px'; // font size for child nodes
+        //     });
 
-          // reset node opacity and colour
-          node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
-          g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');
+        //   // reset node opacity and colour
+        //   node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
+        //   g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');
 
-          // Reset the text, font, and color
-          d3.select(this)
-            .select('text')
-            .text(d.data.name)
-            .style('font-family', 'inherit')
-            .style('fill', '#5a5a5a');
-        })
-        .on('click', function (event, d) {
+        //   // Reset the text, font, and color
+        //   d3.select(this)
+        //     .select('text')
+        //     .text(d.data.name)
+        //     .style('font-family', 'inherit')
+        //     .style('fill', '#5a5a5a');
+        // })
+        // .on('click', function (event, d) {
+
+
           selectedFishIndex = data.findIndex(
             (fish) =>
               `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
@@ -469,6 +471,46 @@ d3.csv('final_use_updated.csv')
               .style('opacity', '90%')
               .style('animation', 'float 6s ease-in-out infinite')
               .style('transition', 'top 0.5s ease-out');
+
+                // // Link and node of active infowindow to be highlighted #188d8d and grey the rest, change highlighted link and node upon cycling next and previous fish. Restore original after closing the infowindow
+                // function highlightNodeAndLink(d) {
+                // // Reset all nodes and links
+                // node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+                // g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+
+                // // Highlight the selected node and its path to the root
+                // let current = d;
+                // while (current) {
+                //   d3.selectAll('.node')
+                //   .filter((n) => n === current)
+                //   .select('circle')
+                //   .style('fill', '#188d8d');
+                //   g.selectAll('.link')
+                //   .filter((l) => l === current)
+                //   .style('stroke', '#188d8d')
+                //   .style('opacity', 1);
+                //   current = current.parent;
+                // }
+
+                // // Grey out the rest of the nodes and paths
+                // node
+                //   .filter((n) => !d.ancestors().includes(n))
+                //   .select('circle')
+                //   .style('opacity', 0.01);
+                // g.selectAll('.link')
+                //   .filter((l) => !d.ancestors().includes(l))
+                //   .style('opacity', 0.01);
+                // }
+
+                // highlightNodeAndLink(d);
+
+                // // Restore original colors and opacity when closing the infowindow
+                // infoWindow.on('remove', () => {
+                // node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+                // g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+                // });
+
+
 
             infoWindow
               .append('img')
@@ -528,6 +570,9 @@ d3.csv('final_use_updated.csv')
         infoWindow.selectAll('img').remove();
 
         infoWindow
+          .append('a')
+          .attr('href', selectedFish.record_link)
+          .attr('target', '_blank')
           .append('img')
           .attr('src', selectedFish.thumbnail)
           .style('width', '100%')
@@ -628,7 +673,19 @@ d3.csv('final_use_updated.csv')
           .style('opacity', '1')
           .style('filter', 'none')
           .style('cursor', 'pointer')
-          .on('click', () => infoWindow.remove());
+          .on('click', function () {
+            infoWindow.remove();
+            //also restore the original colors and opacity of the nodes and links and text
+            node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+            g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+            node.select('text').style('font-size', (d) => {
+              if (d.depth === 0) return '192px'; // font size for master "fish"
+              if (d.depth === 1) return '96px'; // font size for parent nodes
+              if (d.depth === 2) return '64px'; // font size for species nodes
+              return '14px'; // font size for child nodes
+            }).style('fill', '#5a5a5a').text((d) => d.data.name);
+            infoWindow = null; // Set infoWindow to null after removing it
+          });
 
         infoWindow
           .append('img')
@@ -643,6 +700,48 @@ d3.csv('final_use_updated.csv')
           .on('click', () => {
             selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
             showPopupForFish(selectedFishIndex);
+            const selectedFish = data[selectedFishIndex];
+            const selectedNode = root.descendants().find(
+              (d) =>
+              `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
+                selectedFish
+              )}` === d.id
+            );
+
+            // Reset all nodes and links
+            node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+            g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+
+            // Highlight the selected node and its path to the root
+            let current = selectedNode;
+            while (current) {
+              d3.selectAll('.node')
+              .filter((n) => n === current)
+              .select('circle')
+              .style('fill', '#188d8d');
+              g.selectAll('.link')
+              .filter((l) => l === current)
+              .style('stroke', '#188d8d')
+              .style('opacity', 1);
+              current = current.parent;
+            }
+
+                        // reset text size
+                        node.select('text').style('font-size', (d) => {
+                          if (d.depth === 0) return '192px'; // font size for master "fish"
+                          if (d.depth === 1) return '96px'; // font size for parent nodes
+                          if (d.depth === 2) return '64px'; // font size for species nodes
+                          return '14px'; // font size for child nodes
+                        });
+                        
+            // Grey out the rest of the nodes and paths
+            node
+              .filter((n) => !selectedNode.ancestors().includes(n))
+              .select('circle')
+              .style('opacity', 0.01);
+            g.selectAll('.link')
+              .filter((l) => !selectedNode.ancestors().includes(l))
+              .style('opacity', 0.01);
           });
 
         infoWindow
@@ -658,6 +757,48 @@ d3.csv('final_use_updated.csv')
           .on('click', () => {
             selectedFishIndex = (selectedFishIndex + 1) % data.length;
             showPopupForFish(selectedFishIndex);
+            const selectedFish = data[selectedFishIndex];
+            const selectedNode = root.descendants().find(
+              (d) =>
+          `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
+            selectedFish
+          )}` === d.id
+            );
+
+            // Reset all nodes and links
+            node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+            g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+
+            // Highlight the selected node and its path to the root
+            let current = selectedNode;
+            while (current) {
+              d3.selectAll('.node')
+          .filter((n) => n === current)
+          .select('circle')
+          .style('fill', '#188d8d');
+              g.selectAll('.link')
+          .filter((l) => l === current)
+          .style('stroke', '#188d8d')
+          .style('opacity', 1);
+              current = current.parent;
+            }
+
+            // reset text size
+            node.select('text').style('font-size', (d) => {
+              if (d.depth === 0) return '192px'; // font size for master "fish"
+              if (d.depth === 1) return '96px'; // font size for parent nodes
+              if (d.depth === 2) return '64px'; // font size for species nodes
+              return '14px'; // font size for child nodes
+            });
+            
+            // Grey out the rest of the nodes and paths
+            node
+              .filter((n) => !selectedNode.ancestors().includes(n))
+              .select('circle')
+              .style('opacity', 0.01);
+            g.selectAll('.link')
+              .filter((l) => !selectedNode.ancestors().includes(l))
+              .style('opacity', 0.01);
           });
 
         const mapContainer = infoWindow
@@ -757,6 +898,7 @@ d3.csv('final_use_updated.csv')
         .style('display', 'none')
         .style('opacity', '90%');
 
+      
       searchInput.on('input', function () {
         const query = this.value.toLowerCase();
         const suggestions = validatedData
@@ -769,7 +911,7 @@ d3.csv('final_use_updated.csv')
 
         suggestionsContainer.style(
           'display',
-          suggestions.length ? 'block' : 'none'
+          query.length && suggestions.length ? 'block' : 'none'
         );
         suggestionsContainer.selectAll('div').remove();
 
@@ -789,12 +931,37 @@ d3.csv('final_use_updated.csv')
               `<span style="color: #f67a0a;">${d.name}</span> - ${d.nameSci}`
           )
           .on('click', function (event, d) {
+
+
+            
             selectedFishIndex = data.findIndex(
               (fish) =>
-                `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
-                  fish
-                )}` === d.id
+          `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
+            fish
+          )}` === d.id
             );  
+
+        // Show clear button only when there is input
+        if (query.length > 0) {
+          if (searchContainer.select('img').empty()) {
+            searchContainer
+              .append('img')
+              .attr('src', 'cross.svg')
+              .style('width', '24px')
+              .style('height', '24px')
+              .style('position', 'absolute')
+              .style('top', '13px')
+              .style('right', '12px')
+              .style('cursor', 'pointer')
+              .on('click', () => {
+          searchInput.property('value', '');
+          suggestionsContainer.style('display', 'none');
+          searchContainer.select('img').remove();
+              });
+          }
+        } else {
+          searchContainer.select('img').remove();
+        }
 
             // Clicking on a suggestion to open a window to show more info
             const selectedFish = data.find(
@@ -804,7 +971,9 @@ d3.csv('final_use_updated.csv')
                 }.${data.indexOf(fish)}` === d.id
             );
             
-            if (!infoWindow) {
+            //link this infowindow to click event infowindow
+            
+              if (!infoWindow) {
               infoWindow = d3
                 .select('body')
                 .append('div')
@@ -821,6 +990,7 @@ d3.csv('final_use_updated.csv')
                 .style('animation', 'float 6s ease-in-out infinite')
                 .style('transition', 'top 0.5s ease-out');
 
+
                 infoWindow
                 .append('img')
                 .attr('src', 'cross.svg')
@@ -832,7 +1002,19 @@ d3.csv('final_use_updated.csv')
                 .style('opacity', '1')
                 .style('filter', 'none')
                 .style('cursor', 'pointer')
-                .on('click', () => infoWindow.remove());
+                .on('click', function () {
+                  infoWindow.remove();
+                  //also restore the original colors and opacity of the nodes and links and text
+                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+                  node.select('text').style('font-size', (d) => {
+                    if (d.depth === 0) return '192px'; // font size for master "fish"
+                    if (d.depth === 1) return '96px'; // font size for parent nodes
+                    if (d.depth === 2) return '64px'; // font size for species nodes
+                    return '14px'; // font size for child nodes
+                  }).style('fill', '#5a5a5a').text((d) => d.data.name);
+                  infoWindow = null; // Set infoWindow to null after removing it
+                });
 
                 infoWindow
                 .append('img')
@@ -845,11 +1027,52 @@ d3.csv('final_use_updated.csv')
                 .style('transform', 'translateY(-50%)')
                 .style('cursor', 'pointer')
                 .on('click', () => {
-                  selectedFishIndex =
-                    (selectedFishIndex - 1 + data.length) % data.length;
+                  selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
                   showPopupForFish(selectedFishIndex);
+                  const selectedFish = data[selectedFishIndex];
+                  const selectedNode = root.descendants().find(
+                    (d) =>
+                    `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
+                      selectedFish
+                    )}` === d.id
+                  );
+      
+                  // Reset all nodes and links
+                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+      
+                  // Highlight the selected node and its path to the root
+                  let current = selectedNode;
+                  while (current) {
+                    d3.selectAll('.node')
+                    .filter((n) => n === current)
+                    .select('circle')
+                    .style('fill', '#188d8d');
+                    g.selectAll('.link')
+                    .filter((l) => l === current)
+                    .style('stroke', '#188d8d')
+                    .style('opacity', 1);
+                    current = current.parent;
+                  }
+      
+                              // reset text size
+                              node.select('text').style('font-size', (d) => {
+                                if (d.depth === 0) return '192px'; // font size for master "fish"
+                                if (d.depth === 1) return '96px'; // font size for parent nodes
+                                if (d.depth === 2) return '64px'; // font size for species nodes
+                                return '14px'; // font size for child nodes
+                              });
+                              
+                  // Grey out the rest of the nodes and paths
+                  node
+                    .filter((n) => !selectedNode.ancestors().includes(n))
+                    .select('circle')
+                    .style('opacity', 0.01);
+                  g.selectAll('.link')
+                    .filter((l) => !selectedNode.ancestors().includes(l))
+                    .style('opacity', 0.01);
                 });
-  
+      
               infoWindow
                 .append('img')
                 .attr('src', 'next.svg')
@@ -863,6 +1086,48 @@ d3.csv('final_use_updated.csv')
                 .on('click', () => {
                   selectedFishIndex = (selectedFishIndex + 1) % data.length;
                   showPopupForFish(selectedFishIndex);
+                  const selectedFish = data[selectedFishIndex];
+                  const selectedNode = root.descendants().find(
+                    (d) =>
+                `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
+                  selectedFish
+                )}` === d.id
+                  );
+      
+                  // Reset all nodes and links
+                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+      
+                  // Highlight the selected node and its path to the root
+                  let current = selectedNode;
+                  while (current) {
+                    d3.selectAll('.node')
+                .filter((n) => n === current)
+                .select('circle')
+                .style('fill', '#188d8d');
+                    g.selectAll('.link')
+                .filter((l) => l === current)
+                .style('stroke', '#188d8d')
+                .style('opacity', 1);
+                    current = current.parent;
+                  }
+      
+                  // reset text size
+                  node.select('text').style('font-size', (d) => {
+                    if (d.depth === 0) return '192px'; // font size for master "fish"
+                    if (d.depth === 1) return '96px'; // font size for parent nodes
+                    if (d.depth === 2) return '64px'; // font size for species nodes
+                    return '14px'; // font size for child nodes
+                  });
+                  
+                  // Grey out the rest of the nodes and paths
+                  node
+                    .filter((n) => !selectedNode.ancestors().includes(n))
+                    .select('circle')
+                    .style('opacity', 0.01);
+                  g.selectAll('.link')
+                    .filter((l) => !selectedNode.ancestors().includes(l))
+                    .style('opacity', 0.01);
                 });
   
               infoWindow.append('div').attr('id', 'map');
@@ -880,6 +1145,9 @@ d3.csv('final_use_updated.csv')
             infoWindow.selectAll('img').remove();
     
             infoWindow
+              .append('a')
+              .attr('href', selectedFish.record_link)
+              .attr('target', '_blank')
               .append('img')
               .attr('src', selectedFish.thumbnail)
               .style('width', '100%')
@@ -970,7 +1238,7 @@ d3.csv('final_use_updated.csv')
               });
 
 
- infoWindow
+          infoWindow
           .append('img')
           .attr('src', 'cross.svg')
           .style('width', '25px')
@@ -981,8 +1249,21 @@ d3.csv('final_use_updated.csv')
           .style('opacity', '1')
           .style('filter', 'none')
           .style('cursor', 'pointer')
-          .on('click', () => infoWindow.remove());
+          .on('click', function () {
+            infoWindow.remove();
+            //also restore the original colors and opacity of the nodes and links and text
+            node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+            g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+            node.select('text').style('font-size', (d) => {
+              if (d.depth === 0) return '192px'; // font size for master "fish"
+              if (d.depth === 1) return '96px'; // font size for parent nodes
+              if (d.depth === 2) return '64px'; // font size for species nodes
+              return '14px'; // font size for child nodes
+            }).style('fill', '#5a5a5a').text((d) => d.data.name);
+            infoWindow = null; // Set infoWindow to null after removing it
+          });
 
+        
         infoWindow
           .append('img')
           .attr('src', 'previous.svg')
@@ -1075,6 +1356,10 @@ d3.csv('final_use_updated.csv')
     }
   })
   .catch((error) => console.error('Error processing CSV data:', error));
+
+
+
+
 
 //reset button to show entire visualization circle - bottom left corner
 const resetButtonContainer = d3
