@@ -2,8 +2,8 @@ var svg = d3
   .select('svg')
   .style('display', 'block')
   .style('margin', 'auto')
-  .attr('width', window.innerWidth)
-  .attr('height', window.innerHeight);
+  .attr('width', window.innerWidth - 20)
+  .attr('height', window.innerHeight - 20);
 (width = +svg.attr('width')),
   (height = +svg.attr('height')),
   (g = svg
@@ -271,7 +271,7 @@ d3.csv('final_use_updated.csv')
         .attr('width', insetWidth)
         .attr('height', insetHeight)
         .style('position', 'absolute')
-        .style('bottom', '-5px')
+        .style('bottom', '20px')
         .style('right', '25px')
         .style('border', '1px solid #ccc')
         .style('border-radius', '10px')
@@ -350,12 +350,13 @@ d3.csv('final_use_updated.csv')
         .append('rect')
         .attr('width', insetWidth / 8)
         .attr('height', insetHeight / 8)
-        .attr('x', -10)
-        .attr('y', -10)
+        .attr('x', -3)
+        .attr('y', -4)
         .style('fill', '#188d8d')
-        .style('opacity', 0.7)
-        .attr('rx', 2)
-        .attr('ry', 2);
+        .style('stroke', 'none')//#188d8d
+        .style('opacity', 0.6)
+        .attr('rx', 1)
+        .attr('ry', 1);
 
       svg.call(
         zoom.on('zoom', (event) => {
@@ -372,6 +373,9 @@ d3.csv('final_use_updated.csv')
       );
 
       //hover over to highlight the path to the fish, grey out the rest of the nodes + show their nameSci in opensans semi-condensed
+      let selectedFishIndex = 0;
+      let infoWindow;
+
       node
         .filter((d) => d.depth > 2)
         .on('mouseover', function (event, d) {
@@ -402,39 +406,37 @@ d3.csv('final_use_updated.csv')
             .filter((l) => !d.ancestors().includes(l))
             .style('opacity', 0.01);
 
-          console.log(d3.selectAll('.fish-label').data());
-
           // Show the scientific name
           d3.select(this)
             .select('text')
             .text(d.data.nameSci)
             .style('font-family', 'Futura')
             .style('fill', '#188d8d');
-        });
-      // .on('mouseout', function (event, d) {
-      //   // Reset the path to the root
-      //   let current = d;
-      //   while (current) {
-      //     d3.selectAll('.node')
-      //       .filter((n) => n === current)
-      //       .select('circle')
-      //       .style('fill', '#f67a0a');
-      //     current = current.parent;
-      //   }
+        })
+        .on('mouseout', function (event, d) {
+          // Reset the path to the root
+          let current = d;
+          while (current) {
+            d3.selectAll('.node')
+              .filter((n) => n === current)
+              .select('circle')
+              .style('fill', '#f67a0a');
+            current = current.parent;
+          }
 
-      //   //text back to original size
-      //   d3.select(this)
-      //     .select('text')
-      //     .style('font-size', (d) => {
-      //       if (d.depth === 0) return '192px'; // font size for master "fish"
-      //       if (d.depth === 1) return '96px'; // font size for parent nodes
-      //       if (d.depth === 2) return '64px'; // font size for species nodes
-      //       return '14px'; // font size for child nodes
-      //     });
+          //text back to original size
+          d3.select(this)
+            .select('text')
+            .style('font-size', (d) => {
+              if (d.depth === 0) return '192px'; // font size for master "fish"
+              if (d.depth === 1) return '96px'; // font size for parent nodes
+              if (d.depth === 2) return '64px'; // font size for species nodes
+              return '14px'; // font size for child nodes
+            });
 
-      //   // reset node opacity and colour
-      //   node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
-      //   g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');
+          // reset node opacity and colour
+          node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
+          g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');
 
           // Reset the text, font, and color
           d3.select(this)
@@ -444,37 +446,86 @@ d3.csv('final_use_updated.csv')
             .style('fill', '#5a5a5a');
         })
         .on('click', function (event, d) {
-
-
-          // Clicking on a node to open a window to show more info
-          const selectedFish = data.find(
+          selectedFishIndex = data.findIndex(
             (fish) =>
-              `Fish.${fish.ocean}.${fish.species}.${
-                fish.archetype
-              }.${data.indexOf(fish)}` === d.id
+              `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
+                fish
+              )}` === d.id
           );
-          if (selectedFish) {
-            const infoWindow = d3
+
+          if (!infoWindow) {
+            infoWindow = d3
               .select('body')
               .append('div')
               .style('position', 'absolute')
-              .style('top', '70px')
-              .style('right', '20px')
+              .style('top', '60px')
+              .style('left', '20px')
               .style('width', '400px')
               .style('background', 'white')
               .style('border', '1px solid #ccc')
-              .style('border-radius', '15px')
+              .style('border-radius', '10px')
               .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
               .style('padding', '10px')
               .style('opacity', '90%')
-              .attr('draggable', true)
-              .call(
-                d3.drag().on('drag', function (event) {
-                  d3.select(this)
-                    .style('top', event.y - 20 + 'px')
-                    .style('left', event.x - 200 + 'px');
-                })
-              );
+              .style('animation', 'float 6s ease-in-out infinite')
+              .style('transition', 'top 0.5s ease-out');
+
+            infoWindow
+              .append('img')
+              .attr('src', 'cross.svg')
+              .style('width', '25px')
+              .style('height', '25px')
+              .style('position', 'absolute')
+              .style('top', '-37px')
+              .style('right', '10px')
+              .style('opacity', '1')
+              .style('filter', 'none')
+              .style('cursor', 'pointer')
+              .on('click', () => infoWindow.remove());
+
+            infoWindow
+              .append('img')
+              .attr('src', 'previous.svg')
+              .style('width', '19px')
+              .style('height', '19px')
+              .style('position', 'absolute')
+              .style('top', '-25px')
+              .style('left', '10px')
+              .style('transform', 'translateY(-50%)')
+              .style('cursor', 'pointer')
+              .on('click', () => {
+                selectedFishIndex =
+                  (selectedFishIndex - 1 + data.length) % data.length;
+                showPopupForFish(selectedFishIndex);
+              });
+
+            infoWindow
+              .append('img')
+              .attr('src', 'next.svg')
+              .style('width', '19px')
+              .style('height', '19px')
+              .style('position', 'absolute')
+              .style('top', '-25px')
+              .style('left', '40px')
+              .style('transform', 'translateY(-50%)')
+              .style('cursor', 'pointer')
+              .on('click', () => {
+                selectedFishIndex = (selectedFishIndex + 1) % data.length;
+                showPopupForFish(selectedFishIndex);
+              });
+
+            infoWindow.append('div').attr('id', 'map');
+          }
+
+          showPopupForFish(selectedFishIndex);
+        });
+
+      function showPopupForFish(index) {
+        const selectedFish = data[index];
+        if (!selectedFish) return;
+
+        infoWindow.selectAll('div').remove();
+        infoWindow.selectAll('img').remove();
 
         infoWindow
           .append('img')
@@ -482,95 +533,142 @@ d3.csv('final_use_updated.csv')
           .style('width', '100%')
           .style('height', '200px')
           .style('object-fit', 'contain')
-          .style('background-color', '#f0f0f0')
+          .style(
+            'background-color',
+            selectedFish.thumbnail ? 'transparent' : '#f0f0f0'
+          )
           .style('border-radius', '7px')
           .style('margin-bottom', '0.5em');
 
-        //info content text
         infoWindow
           .append('div')
-          .style('padding-left', '20px')
+          .style('padding-left', '10px')
           .style('font-family', 'Open Sans')
           .style('font-size', '16px')
           .style('font-weight', 'bold')
-          .style('color', '#333').html(`
-            <span style="font-family: 'Futura'; font-size: 22px; color: #188d8d; font-style: bold;">
+          .style('color', '#333')
+          .html(`
+            <span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold; margin-bottom: 3em;">
               ${selectedFish.common_name}
             </span> 
             <br> 
             <span style="font-family: 'Open Sans'; font-size: 14px; color: #333; font-style: italic; margin-bottom: 1em;">
               ${selectedFish.title}
-            </span>
-            <br><br> Ocean
-            <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">
-              ${selectedFish.ocean}
-            </span>
-            <br> Species
-            <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">
-              ${selectedFish.species}
-            </span>
-            <br> Archetype
-            <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">
-              ${selectedFish.archetype}
-            </span>
-            <br><br> 
-            <span style="font-family: 'Open Sans'; font-size: 14px; color: #333; font-style: regular; margin-bottom: 1em;">
-              Habitat Location 
-            </span>
-          `);
+            </span>`);
 
-        // close button
+        infoWindow
+          .append('div')
+          .style('padding-left', '10px')
+          .style('font-family', 'Open Sans')
+          .style('font-size', '14px')
+          .style('color', '#333')
+          .style('margin-bottom', '1em')
+          .html(
+            `<br><img src="ocean.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}`
+          );
+
+        infoWindow
+          .append('div')
+          .style('padding-left', '10px')
+          .style('font-family', 'Open Sans')
+          .style('font-size', '14px')
+          .style('color', '#333')
+          .style('margin-bottom', '1em')
+          .html(
+            `<img src="species.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}`
+          );
+
+        infoWindow
+          .append('div')
+          .style('padding-left', '10px')
+          .style('font-family', 'Open Sans')
+          .style('font-size', '14px')
+          .style('color', '#333')
+          .style('margin-bottom', '1em')
+          .html(
+            `<img src="archetype.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> 
+            <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}`
+          );
+
+        const habitatLocation = infoWindow
+          .append('div')
+          .style('padding-left', '10px')
+          .style('font-family', 'Open Sans')
+          .style('font-size', '14px')
+          .style('color', '#188d8d')
+          .style('font-weight', 'bold')
+          .style('margin-bottom', '1em')
+          .html(`Habitat:`);
+
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedFish.latitude}&lon=${selectedFish.longitude}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const placeName = data.display_name || "Somewhere in the Ocean 🌊";
+            habitatLocation.html(
+              `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Near ${placeName}`
+            );
+          })
+          .catch((error) => {
+            console.error('Error fetching place name:', error);
+            habitatLocation.html(
+              `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Somewhere in the Ocean 🌊`
+            );
+          });
+
         infoWindow
           .append('img')
           .attr('src', 'cross.svg')
-          .style('width', '18px')
-          .style('height', '18px')
+          .style('width', '25px')
+          .style('height', '25px')
           .style('position', 'absolute')
-          .style('top', '20px')
-          .style('right', '20px')
+          .style('top', '-37px')
+          .style('right', '10px')
           .style('opacity', '1')
           .style('filter', 'none')
           .style('cursor', 'pointer')
           .on('click', () => infoWindow.remove());
 
-        // previous button
         infoWindow
           .append('img')
           .attr('src', 'previous.svg')
-          .style('width', '18px')
-          .style('height', '18px')
+          .style('width', '19px')
+          .style('height', '19px')
           .style('position', 'absolute')
-          .style('top', '50%')
-          .style('left', '5px')
+          .style('top', '-25px')
+          .style('left', '10px')
           .style('transform', 'translateY(-50%)')
           .style('cursor', 'pointer')
           .on('click', () => {
-            let prevIndex = (index - 1 + data.length) % data.length;
-            showPopupForFish(prevIndex);
+            selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
+            showPopupForFish(selectedFishIndex);
           });
 
-        // next button
         infoWindow
           .append('img')
           .attr('src', 'next.svg')
-          .style('width', '18px')
-          .style('height', '18px')
+          .style('width', '19px')
+          .style('height', '19px')
           .style('position', 'absolute')
-          .style('top', '50%')
-          .style('right', '5px')
+          .style('top', '-25px')
+          .style('left', '40px')
           .style('transform', 'translateY(-50%)')
           .style('cursor', 'pointer')
           .on('click', () => {
-            let nextIndex = (index + 1) % data.length;
-            showPopupForFish(nextIndex);
+            selectedFishIndex = (selectedFishIndex + 1) % data.length;
+            showPopupForFish(selectedFishIndex);
           });
 
-        // map
         const mapContainer = infoWindow
           .append('div')
           .attr('id', 'map')
-          .style('width', '100%')
-          .style('height', '170px')
+          .style('position', 'absolute')
+          .style('border', '2px solid #ccc')
+          .style('top', '292px')
+          .style('right', '18px')
+          .style('width', '50%')
+          .style('height', '80px')
           .style('border-radius', '7px');
 
         setTimeout(() => {
@@ -590,7 +688,7 @@ d3.csv('final_use_updated.csv')
             iconUrl:
               'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
             iconSize: [25, 41],
-            iconAnchor: [12, 41],
+            iconAnchor: [12, 38],
             popupAnchor: [1, -34],
             shadowUrl:
               'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -599,33 +697,28 @@ d3.csv('final_use_updated.csv')
 
           const style = document.createElement('style');
           style.innerHTML = `
-      .default-marker-icon {
-        background: none !important;
-        filter: grayscale(100%);
-      }
-    `;
+            .default-marker-icon {
+              background: none !important;
+              filter: hue-rotate(0deg) saturate(100%) brightness(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(100%);
+            }
+          `;
           document.head.appendChild(style);
 
-              L.marker([selectedFish.latitude, selectedFish.longitude], {
-                icon: defaultIcon,
-              })
-                .addTo(popupMap)
-                .openPopup();
-            }, 0);
-            //highlight the clicked node and path 
-            //windows to move on parts of the screen based on parent node
-            //windows to offset so they dont completely overlap
-            
-          }
-        });
+          L.marker([selectedFish.latitude, selectedFish.longitude], {
+            icon: defaultIcon,
+          })
+            .addTo(popupMap)
+            .openPopup();
+        }, 0);
+      }
 
       //search bar with dropdown suggestions to search for a specific fish - top left corner
       const searchContainer = d3
         .select('body')
         .append('div')
         .style('position', 'absolute')
-        .style('top', '40px')
-        .style('right', '17px')
+        .style('top', '30px')
+        .style('right', '25px')
         .style('width', '300px')
         .style('background', 'white')
         .style('border', '1px solid #ccc')
@@ -695,29 +788,13 @@ d3.csv('final_use_updated.csv')
             (d) =>
               `<span style="color: #f67a0a;">${d.name}</span> - ${d.nameSci}`
           )
-          .on('click', function (event) {
-            const d = d3.select(this).datum();
-            const node = g
-              .selectAll('.node')
-              .filter((n) => n.data.id === d.id)
-              .node();
-            if (node) {
-              node.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-                inline: 'center',
-              });
-              d3.select(node)
-                .select('circle')
-                .style('fill', 'red')
-                .style('stroke', 'none');
-              setTimeout(
-                () => d3.select(node).select('circle').style('fill', '#f67a0a'),
-                2000
-              );
-            }
-            searchInput.property('value', '');
-            suggestionsContainer.style('display', 'none');
+          .on('click', function (event, d) {
+            selectedFishIndex = data.findIndex(
+              (fish) =>
+                `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
+                  fish
+                )}` === d.id
+            );  
 
             // Clicking on a suggestion to open a window to show more info
             const selectedFish = data.find(
@@ -726,122 +803,273 @@ d3.csv('final_use_updated.csv')
                   fish.archetype
                 }.${data.indexOf(fish)}` === d.id
             );
-            if (selectedFish) {
-              const infoWindow = d3
+            
+            if (!infoWindow) {
+              infoWindow = d3
                 .select('body')
                 .append('div')
                 .style('position', 'absolute')
-                .style('top', '70px')
-                .style('right', '20px')
+                .style('top', '60px')
+                .style('left', '20px')
                 .style('width', '400px')
                 .style('background', 'white')
                 .style('border', '1px solid #ccc')
-                .style('border-radius', '15px')
+                .style('border-radius', '10px')
                 .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
                 .style('padding', '10px')
                 .style('opacity', '90%')
-                .attr('draggable', true)
-                .call(
-                  d3.drag().on('drag', function (event) {
-                    d3.select(this)
-                      .style('top', event.y - 20 + 'px')
-                      .style('left', event.x - 200 + 'px');
-                  })
-                );
+                .style('animation', 'float 6s ease-in-out infinite')
+                .style('transition', 'top 0.5s ease-out');
 
-              infoWindow
-                .append('img')
-                .attr('src', selectedFish.thumbnail)
-                .style('width', '100%')
-                .style('border-radius', '7px')
-                .style('margin-bottom', '0.5em');
-
-              infoWindow
-                .append('html')
-                .style('font-family', 'Open Sans')
-                .style('font-size', '16px')
-                .style('font-weight', 'bold')
-                .style('color', '#333')
-                .html(`<span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold;">${selectedFish.common_name}</span> 
-          <br> 
-          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: italic; margin-bottom: 1em;">${selectedFish.title}</span>
-          <br><br> Ocean
-          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}</span>
-          <br> Species
-          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}</span>
-          <br> Archetype
-          <span style="font-family: 'Open Sans ExtraBold'; font-size: 16px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}</span>
-          <br><br> 
-          <span style="font-family: 'Open Sans'; font-size: 16px; color: #333; font-style: regular; margin-bottom: 1em;">Habitat Location 
-          </span>`);
-
-              infoWindow
+                infoWindow
                 .append('img')
                 .attr('src', 'cross.svg')
-                .style('width', '20px')
-                .style('height', '20px')
+                .style('width', '25px')
+                .style('height', '25px')
                 .style('position', 'absolute')
-                .style('top', '20px')
-                .style('right', '20px')
-                .style('opacity', '90%')
-                .style('filter', 'invert(70%)')
+                .style('top', '-37px')
+                .style('right', '10px')
+                .style('opacity', '1')
+                .style('filter', 'none')
                 .style('cursor', 'pointer')
                 .on('click', () => infoWindow.remove());
 
-              infoWindow.append('div'); // Stamen Toner tiles
-              const mapContainer = infoWindow
-                .append('div')
-                .attr('id', 'map')
-                .style('width', '100%')
-                .style('height', '200px')
-                .style('border-radius', '7px');
-              // .style("margin-top", "1em")
-
-              setTimeout(() => {
-                const popupMap = L.map(mapContainer.node(), {
-                  zoomControl: false,
-                }).setView([selectedFish.latitude, selectedFish.longitude], 2);
-                L.tileLayer(
-                  'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-                  {
-                    attribution:
-                      '<a href="http://stamen.com">Stamen Design</a>',
-                    minZoom: 2,
-                    maxZoom: 6,
-                  }
-                ).addTo(popupMap);
-
-                // Add marker to the map with default icon
-                const defaultIcon = L.icon({
-                  iconUrl:
-                    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-                  iconSize: [25, 41], // size of the icon
-                  iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
-                  popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
-                  shadowUrl:
-                    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // shadow
-                  className: 'default-marker-icon', // Add custom class
+                infoWindow
+                .append('img')
+                .attr('src', 'previous.svg')
+                .style('width', '19px')
+                .style('height', '19px')
+                .style('position', 'absolute')
+                .style('top', '-25px')
+                .style('left', '10px')
+                .style('transform', 'translateY(-50%)')
+                .style('cursor', 'pointer')
+                .on('click', () => {
+                  selectedFishIndex =
+                    (selectedFishIndex - 1 + data.length) % data.length;
+                  showPopupForFish(selectedFishIndex);
                 });
+  
+              infoWindow
+                .append('img')
+                .attr('src', 'next.svg')
+                .style('width', '19px')
+                .style('height', '19px')
+                .style('position', 'absolute')
+                .style('top', '-25px')
+                .style('left', '40px')
+                .style('transform', 'translateY(-50%)')
+                .style('cursor', 'pointer')
+                .on('click', () => {
+                  selectedFishIndex = (selectedFishIndex + 1) % data.length;
+                  showPopupForFish(selectedFishIndex);
+                });
+  
+              infoWindow.append('div').attr('id', 'map');
+            }
+  
+            showPopupForFish(selectedFishIndex);
+          });
+  
 
-                //remove background and set color to grey
-                const style = document.createElement('style');
-                style.innerHTML = `
-          .default-marker-icon {
-            background: none !important;
-            filter: grayscale(100%);
-          }
-        `;
-                document.head.appendChild(style);
+          function showPopupForFish(index) {
+            const selectedFish = data[index];
+            if (!selectedFish) return;
+    
+            infoWindow.selectAll('div').remove();
+            infoWindow.selectAll('img').remove();
+    
+            infoWindow
+              .append('img')
+              .attr('src', selectedFish.thumbnail)
+              .style('width', '100%')
+              .style('height', '200px')
+              .style('object-fit', 'contain')
+              .style(
+                'background-color',
+                selectedFish.thumbnail ? 'transparent' : '#f0f0f0'
+              )
+              .style('border-radius', '7px')
+              .style('margin-bottom', '0.5em');
+    
+            infoWindow
+              .append('div')
+              .style('padding-left', '10px')
+              .style('font-family', 'Open Sans')
+              .style('font-size', '16px')
+              .style('font-weight', 'bold')
+              .style('color', '#333')
+              .html(`
+                <span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold; margin-bottom: 3em;">
+                  ${selectedFish.common_name}
+                </span> 
+                <br> 
+                <span style="font-family: 'Open Sans'; font-size: 14px; color: #333; font-style: italic; margin-bottom: 1em;">
+                  ${selectedFish.title}
+                </span>`);
+    
+            infoWindow
+              .append('div')
+              .style('padding-left', '10px')
+              .style('font-family', 'Open Sans')
+              .style('font-size', '14px')
+              .style('color', '#333')
+              .style('margin-bottom', '1em')
+              .html(
+                `<br><img src="ocean.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}`
+              );
+    
+            infoWindow
+              .append('div')
+              .style('padding-left', '10px')
+              .style('font-family', 'Open Sans')
+              .style('font-size', '14px')
+              .style('color', '#333')
+              .style('margin-bottom', '1em')
+              .html(
+                `<img src="species.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}`
+              );
+    
+            infoWindow
+              .append('div')
+              .style('padding-left', '10px')
+              .style('font-family', 'Open Sans')
+              .style('font-size', '14px')
+              .style('color', '#333')
+              .style('margin-bottom', '1em')
+              .html(
+                `<img src="archetype.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> 
+                <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}`
+              );
+    
+            const habitatLocation = infoWindow
+              .append('div')
+              .style('padding-left', '10px')
+              .style('font-family', 'Open Sans')
+              .style('font-size', '14px')
+              .style('color', '#188d8d')
+              .style('font-weight', 'bold')
+              .style('margin-bottom', '1em')
+              .html(`Habitat:`);
+    
+            fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedFish.latitude}&lon=${selectedFish.longitude}`
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                const placeName = data.display_name || "Somewhere in the Ocean 🌊";
+                habitatLocation.html(
+                  `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Near ${placeName}`
+                );
+              })
+              .catch((error) => {
+                console.error('Error fetching place name:', error);
+                habitatLocation.html(
+                  `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Somewhere in the Ocean 🌊`
+                );
+              });
 
-                L.marker([selectedFish.latitude, selectedFish.longitude], {
-                  icon: defaultIcon,
-                })
-                  .addTo(popupMap)
-                  .openPopup();
+
+ infoWindow
+          .append('img')
+          .attr('src', 'cross.svg')
+          .style('width', '25px')
+          .style('height', '25px')
+          .style('position', 'absolute')
+          .style('top', '-37px')
+          .style('right', '10px')
+          .style('opacity', '1')
+          .style('filter', 'none')
+          .style('cursor', 'pointer')
+          .on('click', () => infoWindow.remove());
+
+        infoWindow
+          .append('img')
+          .attr('src', 'previous.svg')
+          .style('width', '19px')
+          .style('height', '19px')
+          .style('position', 'absolute')
+          .style('top', '-25px')
+          .style('left', '10px')
+          .style('transform', 'translateY(-50%)')
+          .style('cursor', 'pointer')
+          .on('click', () => {
+            selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
+            showPopupForFish(selectedFishIndex);
+          });
+
+        infoWindow
+          .append('img')
+          .attr('src', 'next.svg')
+          .style('width', '19px')
+          .style('height', '19px')
+          .style('position', 'absolute')
+          .style('top', '-25px')
+          .style('left', '40px')
+          .style('transform', 'translateY(-50%)')
+          .style('cursor', 'pointer')
+          .on('click', () => {
+            selectedFishIndex = (selectedFishIndex + 1) % data.length;
+            showPopupForFish(selectedFishIndex);
+          });
+
+        const mapContainer = infoWindow
+          .append('div')
+          .attr('id', 'map')
+          .style('position', 'absolute')
+          .style('border', '2px solid #ccc')
+          .style('top', '292px')
+          .style('right', '18px')
+          .style('width', '50%')
+          .style('height', '80px')
+          .style('border-radius', '7px');
+
+        setTimeout(() => {
+          const popupMap = L.map(mapContainer.node(), {
+            zoomControl: false,
+          }).setView([selectedFish.latitude, selectedFish.longitude], 2);
+
+          L.tileLayer(
+            'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+            {
+              minZoom: 2,
+              maxZoom: 6,
+            }
+          ).addTo(popupMap);
+
+          const defaultIcon = L.icon({
+            iconUrl:
+              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 38],
+            popupAnchor: [1, -34],
+            shadowUrl:
+              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+            className: 'default-marker-icon',
+          });
+
+          const style = document.createElement('style');
+          style.innerHTML = `
+            .default-marker-icon {
+              background: none !important;
+              filter: hue-rotate(0deg) saturate(100%) brightness(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(100%);
+            }
+          `;
+          document.head.appendChild(style);
+
+          L.marker([selectedFish.latitude, selectedFish.longitude], {
+            icon: defaultIcon,
+          })
+            .addTo(popupMap)
+            .openPopup();
               }, 0);
             }
+
+
+
+
           });
-      });
+
     } catch (error) {
       console.error('Error during stratification or visualization:', error);
     }
@@ -853,8 +1081,8 @@ const resetButtonContainer = d3
   .select('body')
   .append('div')
   .style('position', 'absolute')
-  .style('bottom', '-5px')
-  .style('left', '30px')
+  .style('bottom', '20px')
+  .style('left', '20px')
   .style('width', '30px')
   .style('height', '30px')
   .style('background', 'white')
@@ -901,8 +1129,8 @@ const footerText = d3
   .select('body')
   .append('div')
   .style('position', 'absolute')
-  .style('bottom', '-8px')
-  .style('left', '85px')
+  .style('bottom', '18px')
+  .style('left', '70px')
   .style('font-family', 'Open Sans')
   .style('font-size', '14px')
   .style('color', '#333')
