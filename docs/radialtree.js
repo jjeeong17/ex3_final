@@ -436,45 +436,45 @@ d3.csv('final_use_updated.csv')
       //   node.select('circle').style('opacity', 1).style('fill', '#f67a0a');
       //   g.selectAll('.link').style('opacity', 1).style('stroke', '#f67a0a');
 
-      //   // // Reset the text, font, and color
-      //   d3.select(this)
-      //     .select('text')
-      //     .text(d.data.name)
-      //     .style('font-family', 'inherit')
-      //     .style('fill', '#5a5a5a');
-      // })
-      // .on('click', function (event, d) {
-      // d3.select(this)
-      //   .select('text')
-      //   .text(d.data.name)
-      //   .style('font-family', 'inherit')
-      //   .style('fill', '#5a5a5a');
+          // Reset the text, font, and color
+          d3.select(this)
+            .select('text')
+            .text(d.data.name)
+            .style('font-family', 'inherit')
+            .style('fill', '#5a5a5a');
+        })
+        .on('click', function (event, d) {
 
-      // Clicking on a node to open a window to show more info
 
-      let currentIndex = null;
-
-      function showPopupForFish(index) {
-        d3.selectAll('.info-window').remove();
-
-        const selectedFish = data[index];
-        if (!selectedFish) return;
-
-        const infoWindow = d3
-          .select('body')
-          .append('div')
-          .attr('class', 'info-window')
-          .style('position', 'absolute')
-          .style('top', '50px')
-          .style('left', '20px')
-          .style('right', '20px')
-          .style('width', '320px')
-          .style('background', 'white')
-          .style('border', '1px solid #ccc')
-          .style('border-radius', '15px')
-          .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
-          .style('padding', '10px')
-          .style('opacity', '90%');
+          // Clicking on a node to open a window to show more info
+          const selectedFish = data.find(
+            (fish) =>
+              `Fish.${fish.ocean}.${fish.species}.${
+                fish.archetype
+              }.${data.indexOf(fish)}` === d.id
+          );
+          if (selectedFish) {
+            const infoWindow = d3
+              .select('body')
+              .append('div')
+              .style('position', 'absolute')
+              .style('top', '70px')
+              .style('right', '20px')
+              .style('width', '400px')
+              .style('background', 'white')
+              .style('border', '1px solid #ccc')
+              .style('border-radius', '15px')
+              .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
+              .style('padding', '10px')
+              .style('opacity', '90%')
+              .attr('draggable', true)
+              .call(
+                d3.drag().on('drag', function (event) {
+                  d3.select(this)
+                    .style('top', event.y - 20 + 'px')
+                    .style('left', event.x - 200 + 'px');
+                })
+              );
 
         infoWindow
           .append('img')
@@ -607,27 +607,16 @@ d3.csv('final_use_updated.csv')
     `;
           document.head.appendChild(style);
 
-          L.marker([selectedFish.latitude, selectedFish.longitude], {
-            icon: defaultIcon,
-          })
-            .addTo(popupMap)
-            .openPopup();
-        }, 0);
-      }
-
-      // Clicking on a node to open a window to show more info
-      node
-        .filter((d) => d.depth > 2)
-        .on('click', function (event, d) {
-          const selectedFish = data.find(
-            (fish) =>
-              `Fish.${fish.ocean}.${fish.species}.${
-                fish.archetype
-              }.${data.indexOf(fish)}` === d.id
-          );
-          if (selectedFish) {
-            currentIndex = data.indexOf(selectedFish);
-            showPopupForFish(currentIndex);
+              L.marker([selectedFish.latitude, selectedFish.longitude], {
+                icon: defaultIcon,
+              })
+                .addTo(popupMap)
+                .openPopup();
+            }, 0);
+            //highlight the clicked node and path 
+            //windows to move on parts of the screen based on parent node
+            //windows to offset so they dont completely overlap
+            
           }
         });
 
