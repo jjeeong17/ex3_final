@@ -4,19 +4,20 @@ Moving forward to explore the translation of fish scientific names to their comm
 The word map is a dynamic visualization that classifies fish species by their native oceans and archetypes, such as predators, scavengers, or reef dwellers, while translating their scientific names into common names for accessibility. Organized into distinct regions, the map highlights the biodiversity of aquatic life in each ocean, from the Atlantic to the Pacific. It bridges scientific taxonomy and practical understanding, showcasing the relationships between species, their ecological roles, and geographic distribution.
 
 ## Cover
-![cover](https://github.com/user-attachments/assets/c630653f-80e0-46d9-8833-c19039efebbd)
+![cover](https://github.com/user-attachments/assets/d5aa7466-a52a-4378-9ff5-c7d53bd6dbdb)
 
 ## Home
-![home](https://github.com/user-attachments/assets/5d38651f-f957-48ef-8c4a-82144bb391b4)
+![home](https://github.com/user-attachments/assets/1bd7670b-2f0b-4d77-a72a-8eef9572b1ba)
 
 ## Overview
-![overview](https://github.com/user-attachments/assets/4b7d6c0a-4495-4bc0-a9c1-a4569e9d63e6)
+![overview](https://github.com/user-attachments/assets/7911f3fe-8898-4ad5-9b7a-633d6104cf86)
 
 ## Search
-![search](https://github.com/user-attachments/assets/cb2e20bd-a681-49e5-a9d5-a7199342f29b)
+![search1](https://github.com/user-attachments/assets/01a42a98-7efa-4686-b2ed-d5c654e089bd)
 
-## Widget
-![win](https://github.com/user-attachments/assets/4aac1766-9bef-43c9-a3e0-d7dcdd3faadb)
+## Widget-on-Click
+![widget-onclick](https://github.com/user-attachments/assets/cda7108d-06a6-49f6-9c32-0d564434f89e)
 
-## Hover
-![hover](https://github.com/user-attachments/assets/cf11b9d3-03ed-4f29-8e05-7ea2b829008f)
+## Widget Cycling
+![next-previous](https://github.com/user-attachments/assets/0599b31a-7561-47be-ad15-ea6fe2c9fdaf)
+
