@@ -581,7 +581,6 @@ d3.csv('final_use_updated.csv')
           L.tileLayer(
             'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
             {
-              attribution: '<a href="http://stamen.com">Stamen Design</a>',
               minZoom: 2,
               maxZoom: 6,
             }
