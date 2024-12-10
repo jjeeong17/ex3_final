@@ -376,6 +376,7 @@ d3.csv('final_use_updated.csv')
       let selectedFishIndex = 0;
       let infoWindow;
 
+
       node
         .filter((d) => d.depth > 2)
         .on('click', function (event, d) {
@@ -454,6 +455,8 @@ d3.csv('final_use_updated.csv')
                 fish
               )}` === d.id
           );
+
+          console.log('Selected Fish Index:', selectedFishIndex);
 
           if (!infoWindow) {
             infoWindow = d3
@@ -851,505 +854,217 @@ d3.csv('final_use_updated.csv')
             .addTo(popupMap)
             .openPopup();
         }, 0);
-      }
-
-      //search bar with dropdown suggestions to search for a specific fish - top left corner
-      const searchContainer = d3
-        .select('body')
-        .append('div')
-        .style('position', 'absolute')
-        .style('top', '30px')
-        .style('right', '25px')
-        .style('width', '300px')
-        .style('background', 'white')
-        .style('border', '1px solid #ccc')
-        .style('border-radius', '25px')
-        .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
-        .style('padding', '10px')
-        .style('animation', 'float 6s ease-in-out infinite')
-        .style('transition', 'top 0.5s ease-out')
-        .style('opacity', '90%');
-
-      const searchInput = searchContainer
-        .append('input')
-        .attr('type', 'text')
-        .attr('placeholder', ' Explore Societies Underwater...')
-        .style('width', '97%')
-        .style('padding', '5px')
-        .style('border', '0px solid #ccc')
-        .style('border-radius', '20px')
-        .style('font-family', 'Open Sans')
-        .style('font-size', '16px')
-        .style('font-weight', 'bold')
-        .style('color', '#333');
-
-      const suggestionsContainer = searchContainer
-        .append('div')
-        .style('position', 'absolute')
-        .style('top', '40px')
-        .style('left', '10px')
-        .style('width', '300px')
-        .style('background', 'white')
-        .style('border', '1px solid #ccc')
-        .style('border-radius', '5px')
-        .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
-        .style('max-height', '200px')
-        .style('overflow-y', 'auto')
-        .style('display', 'none')
-        .style('opacity', '90%');
-
-      
-      searchInput.on('input', function () {
-        const query = this.value.toLowerCase();
-        const suggestions = validatedData
-          .filter(
-            (d) =>
-              d.name.toLowerCase().includes(query) ||
-              d.nameSci.toLowerCase().includes(query)
-          )
-          .filter((d) => d.name.toLowerCase() !== d.nameSci.toLowerCase());
-
-        suggestionsContainer.style(
-          'display',
-          query.length && suggestions.length ? 'block' : 'none'
-        );
-        suggestionsContainer.selectAll('div').remove();
-
-        suggestionsContainer
-          .selectAll('div')
-          .data(suggestions)
-          .enter()
-          .append('div')
-          .style('padding', '10px')
-          .style('cursor', 'pointer')
-          .style('border-bottom', '1px solid #ccc')
-          .style('font-family', 'Open Sans')
-          .style('font-weight', 'bold')
-          .style('opacity', '0.9')
-          .html(
-            (d) =>
-              `<span style="color: #f67a0a;">${d.name}</span> - ${d.nameSci}`
-          )
-          .on('click', function (event, d) {
-
-
-            
-            selectedFishIndex = data.findIndex(
-              (fish) =>
-          `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
-            fish
-          )}` === d.id
-            );  
-
-        // Show clear button only when there is input
-        if (query.length > 0) {
-          if (searchContainer.select('img').empty()) {
-            searchContainer
-              .append('img')
-              .attr('src', 'cross.svg')
-              .style('width', '24px')
-              .style('height', '24px')
-              .style('position', 'absolute')
-              .style('top', '13px')
-              .style('right', '12px')
-              .style('cursor', 'pointer')
-              .on('click', () => {
-          searchInput.property('value', '');
-          suggestionsContainer.style('display', 'none');
-          searchContainer.select('img').remove();
-              });
-          }
-        } else {
-          searchContainer.select('img').remove();
-        }
-
-            // Clicking on a suggestion to open a window to show more info
-            const selectedFish = data.find(
-              (fish) =>
-                `Fish.${fish.ocean}.${fish.species}.${
-                  fish.archetype
-                }.${data.indexOf(fish)}` === d.id
-            );
-            
-            //link this infowindow to click event infowindow
-            
-              if (!infoWindow) {
-              infoWindow = d3
-                .select('body')
-                .append('div')
-                .style('position', 'absolute')
-                .style('top', '60px')
-                .style('left', '20px')
-                .style('width', '400px')
-                .style('background', 'white')
-                .style('border', '1px solid #ccc')
-                .style('border-radius', '10px')
-                .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
-                .style('padding', '10px')
-                .style('opacity', '90%')
-                .style('animation', 'float 6s ease-in-out infinite')
-                .style('transition', 'top 0.5s ease-out');
-
-
-                infoWindow
-                .append('img')
-                .attr('src', 'cross.svg')
-                .style('width', '25px')
-                .style('height', '25px')
-                .style('position', 'absolute')
-                .style('top', '-37px')
-                .style('right', '10px')
-                .style('opacity', '1')
-                .style('filter', 'none')
-                .style('cursor', 'pointer')
-                .on('click', function () {
-                  infoWindow.remove();
-                  //also restore the original colors and opacity of the nodes and links and text
-                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
-                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
-                  node.select('text').style('font-size', (d) => {
-                    if (d.depth === 0) return '192px'; // font size for master "fish"
-                    if (d.depth === 1) return '96px'; // font size for parent nodes
-                    if (d.depth === 2) return '64px'; // font size for species nodes
-                    return '14px'; // font size for child nodes
-                  }).style('fill', '#5a5a5a').text((d) => d.data.name);
-                  infoWindow = null; // Set infoWindow to null after removing it
-                });
-
-                infoWindow
-                .append('img')
-                .attr('src', 'previous.svg')
-                .style('width', '19px')
-                .style('height', '19px')
-                .style('position', 'absolute')
-                .style('top', '-25px')
-                .style('left', '10px')
-                .style('transform', 'translateY(-50%)')
-                .style('cursor', 'pointer')
-                .on('click', () => {
-                  selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
-                  showPopupForFish(selectedFishIndex);
-                  const selectedFish = data[selectedFishIndex];
-                  const selectedNode = root.descendants().find(
-                    (d) =>
-                    `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
-                      selectedFish
-                    )}` === d.id
-                  );
-      
-                  // Reset all nodes and links
-                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
-                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
-      
-                  // Highlight the selected node and its path to the root
-                  let current = selectedNode;
-                  while (current) {
-                    d3.selectAll('.node')
-                    .filter((n) => n === current)
-                    .select('circle')
-                    .style('fill', '#188d8d');
-                    g.selectAll('.link')
-                    .filter((l) => l === current)
-                    .style('stroke', '#188d8d')
-                    .style('opacity', 1);
-                    current = current.parent;
-                  }
-      
-                              // reset text size
-                              node.select('text').style('font-size', (d) => {
-                                if (d.depth === 0) return '192px'; // font size for master "fish"
-                                if (d.depth === 1) return '96px'; // font size for parent nodes
-                                if (d.depth === 2) return '64px'; // font size for species nodes
-                                return '14px'; // font size for child nodes
-                              });
-                              
-                  // Grey out the rest of the nodes and paths
-                  node
-                    .filter((n) => !selectedNode.ancestors().includes(n))
-                    .select('circle')
-                    .style('opacity', 0.01);
-                  g.selectAll('.link')
-                    .filter((l) => !selectedNode.ancestors().includes(l))
-                    .style('opacity', 0.01);
-                });
-      
-              infoWindow
-                .append('img')
-                .attr('src', 'next.svg')
-                .style('width', '19px')
-                .style('height', '19px')
-                .style('position', 'absolute')
-                .style('top', '-25px')
-                .style('left', '40px')
-                .style('transform', 'translateY(-50%)')
-                .style('cursor', 'pointer')
-                .on('click', () => {
-                  selectedFishIndex = (selectedFishIndex + 1) % data.length;
-                  showPopupForFish(selectedFishIndex);
-                  const selectedFish = data[selectedFishIndex];
-                  const selectedNode = root.descendants().find(
-                    (d) =>
-                `Fish.${selectedFish.ocean}.${selectedFish.species}.${selectedFish.archetype}.${data.indexOf(
-                  selectedFish
-                )}` === d.id
-                  );
-      
-                  // Reset all nodes and links
-                  node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
-                  g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
-      
-                  // Highlight the selected node and its path to the root
-                  let current = selectedNode;
-                  while (current) {
-                    d3.selectAll('.node')
-                .filter((n) => n === current)
-                .select('circle')
-                .style('fill', '#188d8d');
-                    g.selectAll('.link')
-                .filter((l) => l === current)
-                .style('stroke', '#188d8d')
-                .style('opacity', 1);
-                    current = current.parent;
-                  }
-      
-                  // reset text size
-                  node.select('text').style('font-size', (d) => {
-                    if (d.depth === 0) return '192px'; // font size for master "fish"
-                    if (d.depth === 1) return '96px'; // font size for parent nodes
-                    if (d.depth === 2) return '64px'; // font size for species nodes
-                    return '14px'; // font size for child nodes
-                  });
-                  
-                  // Grey out the rest of the nodes and paths
-                  node
-                    .filter((n) => !selectedNode.ancestors().includes(n))
-                    .select('circle')
-                    .style('opacity', 0.01);
-                  g.selectAll('.link')
-                    .filter((l) => !selectedNode.ancestors().includes(l))
-                    .style('opacity', 0.01);
-                });
-  
-              infoWindow.append('div').attr('id', 'map');
-            }
-  
-            showPopupForFish(selectedFishIndex);
-          });
-  
-
-          function showPopupForFish(index) {
-            const selectedFish = data[index];
-            if (!selectedFish) return;
-    
-            infoWindow.selectAll('div').remove();
-            infoWindow.selectAll('img').remove();
-    
-            infoWindow
-              .append('a')
-              .attr('href', selectedFish.record_link)
-              .attr('target', '_blank')
-              .append('img')
-              .attr('src', selectedFish.thumbnail)
-              .style('width', '100%')
-              .style('height', '200px')
-              .style('object-fit', 'contain')
-              .style(
-                'background-color',
-                selectedFish.thumbnail ? 'transparent' : '#f0f0f0'
-              )
-              .style('border-radius', '7px')
-              .style('margin-bottom', '0.5em');
-    
-            infoWindow
-              .append('div')
-              .style('padding-left', '10px')
-              .style('font-family', 'Open Sans')
-              .style('font-size', '16px')
-              .style('font-weight', 'bold')
-              .style('color', '#333')
-              .html(`
-                <span style="font-family: 'Futura'; font-size: 24px; color: #188d8d; font-style: bold; margin-bottom: 3em;">
-                  ${selectedFish.common_name}
-                </span> 
-                <br> 
-                <span style="font-family: 'Open Sans'; font-size: 14px; color: #333; font-style: italic; margin-bottom: 1em;">
-                  ${selectedFish.title}
-                </span>`);
-    
-            infoWindow
-              .append('div')
-              .style('padding-left', '10px')
-              .style('font-family', 'Open Sans')
-              .style('font-size', '14px')
-              .style('color', '#333')
-              .style('margin-bottom', '1em')
-              .html(
-                `<br><img src="ocean.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.ocean}`
-              );
-    
-            infoWindow
-              .append('div')
-              .style('padding-left', '10px')
-              .style('font-family', 'Open Sans')
-              .style('font-size', '14px')
-              .style('color', '#333')
-              .style('margin-bottom', '1em')
-              .html(
-                `<img src="species.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.species}`
-              );
-    
-            infoWindow
-              .append('div')
-              .style('padding-left', '10px')
-              .style('font-family', 'Open Sans')
-              .style('font-size', '14px')
-              .style('color', '#333')
-              .style('margin-bottom', '1em')
-              .html(
-                `<img src="archetype.svg" style="width: 15px; height: 15px; vertical-align: middle; margin-bottom: 3px; margin-right: 2px; "> 
-                <span style="font-family: 'Open Sans ExtraBold'; font-size: 14px; color: #188d8d; font-style: bold; margin-bottom: 2em;">${selectedFish.archetype}`
-              );
-    
-            const habitatLocation = infoWindow
-              .append('div')
-              .style('padding-left', '10px')
-              .style('font-family', 'Open Sans')
-              .style('font-size', '14px')
-              .style('color', '#188d8d')
-              .style('font-weight', 'bold')
-              .style('margin-bottom', '1em')
-              .html(`Habitat:`);
-    
-            fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedFish.latitude}&lon=${selectedFish.longitude}`
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                const placeName = data.display_name || "Somewhere in the Ocean 🌊";
-                habitatLocation.html(
-                  `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Near ${placeName}`
-                );
-              })
-              .catch((error) => {
-                console.error('Error fetching place name:', error);
-                habitatLocation.html(
-                  `<img src="location.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-bottom: 3px; margin-right: 1px; "> Somewhere in the Ocean 🌊`
-                );
-              });
-
-
-          infoWindow
-          .append('img')
-          .attr('src', 'cross.svg')
-          .style('width', '25px')
-          .style('height', '25px')
-          .style('position', 'absolute')
-          .style('top', '-37px')
-          .style('right', '10px')
-          .style('opacity', '1')
-          .style('filter', 'none')
-          .style('cursor', 'pointer')
-          .on('click', function () {
-            infoWindow.remove();
-            //also restore the original colors and opacity of the nodes and links and text
-            node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
-            g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
-            node.select('text').style('font-size', (d) => {
-              if (d.depth === 0) return '192px'; // font size for master "fish"
-              if (d.depth === 1) return '96px'; // font size for parent nodes
-              if (d.depth === 2) return '64px'; // font size for species nodes
-              return '14px'; // font size for child nodes
-            }).style('fill', '#5a5a5a').text((d) => d.data.name);
-            infoWindow = null; // Set infoWindow to null after removing it
-          });
 
         
-        infoWindow
-          .append('img')
-          .attr('src', 'previous.svg')
-          .style('width', '19px')
-          .style('height', '19px')
-          .style('position', 'absolute')
-          .style('top', '-25px')
-          .style('left', '10px')
-          .style('transform', 'translateY(-50%)')
-          .style('cursor', 'pointer')
-          .on('click', () => {
-            selectedFishIndex = (selectedFishIndex - 1 + data.length) % data.length;
-            showPopupForFish(selectedFishIndex);
-          });
+      }
+     
+     
+      //add search bar at top right corner. the search bar will have dropdown suggestions to search for a specific fish, which when clicked, directs to the same infowindow. + Show clear button only when there is input
+const searchContainer = d3
+  .select('body')
+  .append('div')
+  .style('position', 'absolute')
+  .style('top', '20px')
+  .style('right', '20px')
+  .style('width', '300px')
+  .style('height', '40px')
+  .style('background', 'white')
+  .style('border', '1px solid #ccc')
+  .style('border-radius', '5px')
+  .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
+  .style('display', 'flex')
+  .style('align-items', 'center')
+  .style('padding', '0 10px')
+  .style('opacity', '90%');
 
-        infoWindow
-          .append('img')
-          .attr('src', 'next.svg')
-          .style('width', '19px')
-          .style('height', '19px')
-          .style('position', 'absolute')
-          .style('top', '-25px')
-          .style('left', '40px')
-          .style('transform', 'translateY(-50%)')
-          .style('cursor', 'pointer')
-          .on('click', () => {
-            selectedFishIndex = (selectedFishIndex + 1) % data.length;
-            showPopupForFish(selectedFishIndex);
-          });
+const searchInput = searchContainer
+  .append('input')
+  .attr('type', 'text')
+  .attr('placeholder', 'Search for a fish...')
+  .style('width', '100%')
+  .style('border', 'none')
+  .style('outline', 'none')
+  .style('font-size', '14px')
+  .style('padding', '5px');
 
-        const mapContainer = infoWindow
-          .append('div')
-          .attr('id', 'map')
-          .style('position', 'absolute')
-          .style('border', '2px solid #ccc')
-          .style('top', '292px')
-          .style('right', '18px')
-          .style('width', '50%')
-          .style('height', '80px')
-          .style('border-radius', '7px');
+const clearButton = searchContainer
+  .append('img')
+  .attr('src', 'cross.svg')
+  .style('width', '20px')
+  .style('height', '20px')
+  .style('cursor', 'pointer')
+  .style('display', 'none')
+  .on('click', () => {
+    searchInput.property('value', '');
+    clearButton.style('display', 'none');
+    // Reset the visualization
+    node.select('circle').style('fill', '#f67a0a').style('opacity', 1);
+    g.selectAll('.link').style('stroke', '#f67a0a').style('opacity', 1);
+    node.select('text').style('font-size', (d) => {
+      if (d.depth === 0) return '192px';
+      if (d.depth === 1) return '96px';
+      if (d.depth === 2) return '64px';
+      return '14px';
+    }).style('fill', '#5a5a5a').text((d) => d.data.name);
+    // Close any open info window
+    if (infoWindow) {
+      infoWindow.remove();
+      infoWindow = null;
+    }
+    // Close suggestions
+    searchContainer.selectAll('div').style('display', 'none');
+  });
 
-        setTimeout(() => {
-          const popupMap = L.map(mapContainer.node(), {
-            zoomControl: false,
-          }).setView([selectedFish.latitude, selectedFish.longitude], 2);
+searchInput.on('input', function () {
+  const query = this.value.toLowerCase();
+  if (query) {
+    clearButton.style('display', 'block');
+    const suggestions = data.filter((d) =>
+      d.common_name.toLowerCase().includes(query)
+    );
+    // Show suggestions and handle click events to navigate to the fish
+    const suggestionContainer = searchContainer
+      .append('div')
+      .style('position', 'absolute')
+      .style('top', '40px')
+      .style('left', '0')
+      .style('width', '100%')
+      .style('background', 'white')
+      .style('border', '1px solid #ccc')
+      .style('border-radius', '5px')
+      .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
+      .style('z-index', '1000')
+      .style('max-height', '200px')
+      .style('overflow-y', 'auto');
 
-          L.tileLayer(
-            'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-            {
-              minZoom: 2,
-              maxZoom: 6,
-            }
-          ).addTo(popupMap);
+    suggestionContainer.selectAll('div')
+      .data(suggestions)
+      .enter()
+      .append('div')
+      .style('padding', '5px')
+      .style('cursor', 'pointer')
+      .style('border-bottom', '1px solid #eee')
+      .text(d => d.common_name)
+      .on('click', (event, d) => {
+      const selectedNode = root.descendants().find(
+        node => node.data.name === d.common_name
+      );
+      if (selectedNode) {
+        // Highlight the selected node and its path to the root
+        let current = selectedNode;
+        while (current) {
+        d3.selectAll('.node')
+          .filter(n => n === current)
+          .select('circle')
+          .style('fill', '#188d8d');
+        g.selectAll('.link')
+          .filter(l => l === current)
+          .style('stroke', '#188d8d')
+          .style('opacity', 1);
+        current = current.parent;
+        }
 
-          const defaultIcon = L.icon({
-            iconUrl:
-              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 38],
-            popupAnchor: [1, -34],
-            shadowUrl:
-              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-            className: 'default-marker-icon',
-          });
+        // Grey out the rest of the nodes and paths
+        node
+        .filter(n => !selectedNode.ancestors().includes(n))
+        .select('circle')
+        .style('opacity', 0.01);
+        g.selectAll('.link')
+        .filter(l => !selectedNode.ancestors().includes(l))
+        .style('opacity', 0.01);
 
-          const style = document.createElement('style');
-          style.innerHTML = `
-            .default-marker-icon {
-              background: none !important;
-              filter: hue-rotate(0deg) saturate(100%) brightness(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(100%);
-            }
-          `;
-          document.head.appendChild(style);
+        // Show the scientific name
+        d3.selectAll('.node')
+        .filter(n => n === selectedNode)
+        .select('text')
+        .text(selectedNode.data.nameSci)
+        .style('font-family', 'Futura')
+        .style('fill', '#188d8d');
 
-          L.marker([selectedFish.latitude, selectedFish.longitude], {
-            icon: defaultIcon,
-          })
-            .addTo(popupMap)
-            .openPopup();
-              }, 0);
-            }
+        // Show the infowindow
+            selectedFishIndex = data.findIndex(
+            (fish) =>
+              `Fish.${fish.ocean}.${fish.species}.${fish.archetype}.${data.indexOf(
+              fish
+              )}` === selectedNode.id
+            );
 
+            console.log('Selected Fish Index:', selectedFishIndex);
 
+        if (!infoWindow) {
+          infoWindow = d3
+            .select('body')
+            .append('div')
+            .style('position', 'absolute')
+            .style('top', '60px')
+            .style('left', '20px')
+            .style('width', '400px')
+            .style('background', 'white')
+            .style('border', '1px solid #ccc')
+            .style('border-radius', '10px')
+            .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
+            .style('padding', '10px')
+            .style('opacity', '90%')
+            .style('animation', 'float 6s ease-in-out infinite')
+            .style('transition', 'top 0.5s ease-out');
 
+          infoWindow
+            .append('img')
+            .attr('src', 'cross.svg')
+            .style('width', '25px')
+            .style('height', '25px')
+            .style('position', 'absolute')
+            .style('top', '-37px')
+            .style('right', '10px')
+            .style('opacity', '1')
+            .style('filter', 'none')
+            .style('cursor', 'pointer')
+            .on('click', () => infoWindow.remove());
 
-          });
+          infoWindow
+            .append('img')
+            .attr('src', 'previous.svg')
+            .style('width', '19px')
+            .style('height', '19px')
+            .style('position', 'absolute')
+            .style('top', '-25px')
+            .style('left', '10px')
+            .style('transform', 'translateY(-50%)')
+            .style('cursor', 'pointer')
+            .on('click', () => {
+              selectedFishIndex =
+                (selectedFishIndex - 1 + data.length) % data.length;
+              showPopupForFish(selectedFishIndex);
+            });
+
+          infoWindow
+            .append('img')
+            .attr('src', 'next.svg')
+            .style('width', '19px')
+            .style('height', '19px')
+            .style('position', 'absolute')
+            .style('top', '-25px')
+            .style('left', '40px')
+            .style('transform', 'translateY(-50%)')
+            .style('cursor', 'pointer')
+            .on('click', () => {
+              selectedFishIndex = (selectedFishIndex + 1) % data.length;
+              showPopupForFish(selectedFishIndex);
+            });
+
+          infoWindow.append('div').attr('id', 'map');
+        }
+
+        showPopupForFish(selectedFishIndex);
+      }
+      suggestionContainer.style('display', 'none');
+    });
+  } else {
+    clearButton.style('display', 'none');
+  }
+});
+      
+
 
     } catch (error) {
       console.error('Error during stratification or visualization:', error);
