@@ -412,7 +412,8 @@ d3.csv('final_use_updated.csv')
             .select('text')
             .text(d.data.nameSci)
             .style('font-family', 'Futura')
-            .style('fill', '#188d8d');
+            .style('fill', '#188d8d')
+            .style('font-size', '128px');
         // })
         // .on('mouseout', function (event, d) {
         //   // Reset the path to the root
@@ -865,27 +866,31 @@ const searchContainer = d3
   .append('div')
   .style('position', 'absolute')
   .style('top', '20px')
-  .style('right', '20px')
-  .style('width', '300px')
-  .style('height', '40px')
+  .style('right', '18px')
+  .style('width', '400px')
+  .style('height', '45px')
   .style('background', 'white')
   .style('border', '1px solid #ccc')
-  .style('border-radius', '5px')
+  .style('border-radius', '24px')
   .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
   .style('display', 'flex')
   .style('align-items', 'center')
   .style('padding', '0 10px')
-  .style('opacity', '90%');
+  .style('opacity', '90%')
+  .style('animation', 'float 6s ease-in-out infinite')
+  .style('transition', 'top 0.5s ease-out');
 
 const searchInput = searchContainer
   .append('input')
   .attr('type', 'text')
-  .attr('placeholder', 'Search for a fish...')
+  .attr('placeholder', 'Explore Societies Underwater...')
   .style('width', '100%')
   .style('border', 'none')
   .style('outline', 'none')
-  .style('font-size', '14px')
-  .style('padding', '5px');
+  .style('font-size', '16px')
+  .style('padding', '5px')
+  .style('font-family', 'Open Sans')
+  .style('font-weight', 'bold');
 
 const clearButton = searchContainer
   .append('img')
@@ -935,6 +940,8 @@ searchInput.on('input', function () {
       .style('box-shadow', '2px 2px 6px rgba(0, 0, 0, 0.2)')
       .style('z-index', '1000')
       .style('max-height', '200px')
+      .style('font-family', 'Open Sans')
+      .style('font-weight', 'bold')
       .style('overflow-y', 'auto');
 
     suggestionContainer.selectAll('div')
@@ -944,25 +951,25 @@ searchInput.on('input', function () {
       .style('padding', '5px')
       .style('cursor', 'pointer')
       .style('border-bottom', '1px solid #eee')
-      .text(d => d.common_name)
+      .html(d => `${d.common_name} <span style="color: #f67a0a;"> - ${d.title}</span>`)
       .on('click', (event, d) => {
       const selectedNode = root.descendants().find(
-        node => node.data.name === d.common_name
+      node => node.data.name === d.common_name
       );
       if (selectedNode) {
-        // Highlight the selected node and its path to the root
-        let current = selectedNode;
-        while (current) {
-        d3.selectAll('.node')
-          .filter(n => n === current)
-          .select('circle')
-          .style('fill', '#188d8d');
-        g.selectAll('.link')
-          .filter(l => l === current)
-          .style('stroke', '#188d8d')
-          .style('opacity', 1);
-        current = current.parent;
-        }
+      // Highlight the selected node and its path to the root
+      let current = selectedNode;
+      while (current) {
+      d3.selectAll('.node')
+        .filter(n => n === current)
+        .select('circle')
+        .style('fill', '#188d8d');
+      g.selectAll('.link')
+        .filter(l => l === current)
+        .style('stroke', '#188d8d')
+        .style('opacity', 1);
+      current = current.parent;
+      }
 
         // Grey out the rest of the nodes and paths
         node
@@ -979,6 +986,7 @@ searchInput.on('input', function () {
         .select('text')
         .text(selectedNode.data.nameSci)
         .style('font-family', 'Futura')
+        .style('font-size', '128px')
         .style('fill', '#188d8d');
 
         // Show the infowindow
